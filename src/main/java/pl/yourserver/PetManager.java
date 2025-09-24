@@ -21,14 +21,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PetManager {
 
     private final PetPlugin plugin;
-    private final Map<UUID, Pet> activePets;
     private final Map<UUID, List<Pet>> playerPets;
     private final LibsDisguisesHook libsDisguisesHook;
     private static final double DISGUISED_WOLF_SPEED = 0.42D;
 
     public PetManager(PetPlugin plugin) {
         this.plugin = plugin;
-        this.activePets = new ConcurrentHashMap<>();
         this.playerPets = new ConcurrentHashMap<>();
         this.libsDisguisesHook = new LibsDisguisesHook(plugin);
     }
@@ -45,10 +43,10 @@ public class PetManager {
             return;
         }
 
-        // Despawn poprzedniego peta jeśli istnieje
-        despawnPet(owner);
+        // Usuń aktualną instancję tego samego peta przed ponownym spawnem
+        despawnPet(owner, pet);
 
-        Location spawnLoc = owner.getLocation().add(1, 0, 1);
+        Location spawnLoc = getInitialSpawnLocation(owner, pet);
         Entity entity = spawnWolfBase(owner, spawnLoc);
 
         if (!(entity instanceof Wolf)) {
@@ -67,28 +65,38 @@ public class PetManager {
         }
 
         pet.setEntity(entity);
-        activePets.put(owner.getUniqueId(), pet);
     }
 
     // Despawn peta
     public void despawnPet(Player owner) {
-        Pet pet = activePets.get(owner.getUniqueId());
-        if (pet != null && pet.getEntity() != null && !pet.getEntity().isDead()) {
-            Entity entity = pet.getEntity();
-
-            if (isLibsDisguisesEnabled() && libsDisguisesHook.isDisguised(entity)) {
-                libsDisguisesHook.undisguise(entity);
-            }
-
-            entity.remove();
-            pet.setEntity(null);
-
-            // Wyczyść pozycję peta z PetFollowTask
-            if (plugin.getPetFollowTask() != null) {
-                plugin.getPetFollowTask().clearPetPosition(pet.getUuid());
-            }
+        for (Pet pet : getActivePets(owner)) {
+            despawnPet(owner, pet);
         }
-        activePets.remove(owner.getUniqueId());
+    }
+
+    // Despawn konkretnego peta
+    public void despawnPet(Player owner, Pet pet) {
+        if (pet == null) {
+            return;
+        }
+
+        Entity entity = pet.getEntity();
+        if (entity == null || entity.isDead()) {
+            pet.setEntity(null);
+            return;
+        }
+
+        if (isLibsDisguisesEnabled() && libsDisguisesHook.isDisguised(entity)) {
+            libsDisguisesHook.undisguise(entity);
+        }
+
+        entity.remove();
+        pet.setEntity(null);
+
+        // Wyczyść pozycję peta z PetFollowTask
+        if (plugin.getPetFollowTask() != null) {
+            plugin.getPetFollowTask().clearPetPosition(pet.getUuid());
+        }
     }
 
     private Entity spawnWolfBase(Player owner, Location spawnLoc) {
@@ -160,6 +168,24 @@ public class PetManager {
         }
     }
 
+    private Location getInitialSpawnLocation(Player owner, Pet pet) {
+        PetFollowTask followTask = plugin.getPetFollowTask();
+        if (followTask != null) {
+            List<Pet> activePets = getActivePets(owner);
+            int totalPets = activePets.size();
+            int index = activePets.indexOf(pet);
+
+            if (totalPets > 0 && index >= 0) {
+                Location calculated = followTask.calculateOffsetLocation(owner, index, totalPets);
+                if (calculated != null) {
+                    return calculated;
+                }
+            }
+        }
+
+        return owner.getLocation().clone().add(1, 0, 1);
+    }
+
     private boolean isLibsDisguisesEnabled() {
         return libsDisguisesHook.canUseDisguises();
     }
@@ -169,7 +195,7 @@ public class PetManager {
         if (pet.isActive()) {
             // Deaktywuj peta
             pet.setActive(false);
-            despawnPet(owner);
+            despawnPet(owner, pet);
         } else {
             if (!isLibsDisguisesEnabled()) {
                 TextUtil.sendMessage(owner, "&cAktywne pety wymagają zainstalowanego &eLibsDisguises&c.");
@@ -310,7 +336,7 @@ public class PetManager {
 
     // Pobierz aktywnego peta
     public Pet getActivePet(Player player) {
-        return activePets.get(player.getUniqueId());
+        return getActivePets(player).stream().findFirst().orElse(null);
     }
 
     // Wczytaj pety gracza (thread-safe version - nie spawnuje petów)
@@ -346,7 +372,6 @@ public class PetManager {
     public void unloadPlayerPets(Player player) {
         despawnPet(player);
         playerPets.remove(player.getUniqueId());
-        activePets.remove(player.getUniqueId());
     }
 
     // Sprawdź czy gracz ma aktywnego peta określonego typu
