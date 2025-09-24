@@ -78,7 +78,7 @@ public class PetFollowTask extends BukkitRunnable {
                     stuckTicks.remove(pet.getUuid());
                 }
 
-                Location targetLoc = getOffsetLocation(player, petIndex, petCount);
+                Location targetLoc = calculateOffsetLocation(player, petIndex, petCount);
 
                 boolean shouldTeleport = distance > teleportDistance
                         && stuckTicks.getOrDefault(pet.getUuid(), 0) >= STUCK_TICK_THRESHOLD;
@@ -151,7 +151,7 @@ public class PetFollowTask extends BukkitRunnable {
         }
     }
 
-    private Location getOffsetLocation(Player player, int index, int totalPets) {
+    public Location calculateOffsetLocation(Player player, int index, int totalPets) {
         Location loc = player.getLocation();
 
         // Offset different pet counts for nicer positioning

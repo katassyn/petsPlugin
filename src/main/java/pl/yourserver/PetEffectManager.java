@@ -316,7 +316,7 @@ public class PetEffectManager {
                 // Duplikacja efektu drugiego peta
                 List<Pet> activePets = plugin.getPetManager().getActivePets(player);
                 for (Pet otherPet : activePets) {
-                    if (otherPet != pet && otherPet.getType() != PetType.ENDER_DRAGON) {
+                    if (otherPet != pet && otherPet.getType() != PetType.ENDER_DRAGON && otherPet.getType() != PetType.WARDEN) {
                         applyPetEffect(player, otherPet); // Duplikuj efekt
 
                         // Specjalny efekt na 100lvl: podwÄ‚â€žĂ˘â‚¬ĹˇĂ„Ä…Ă˘â‚¬Ĺˇjna duplikacja
