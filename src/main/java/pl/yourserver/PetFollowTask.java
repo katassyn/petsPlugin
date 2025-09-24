@@ -50,6 +50,13 @@ public class PetFollowTask extends BukkitRunnable {
                 Location playerLoc = player.getLocation();
                 Location petLoc = entity.getLocation();
 
+                if (entity instanceof Mob) {
+                    Mob mob = (Mob) entity;
+                    if (mob.getTarget() != null) {
+                        mob.setTarget(null);
+                    }
+                }
+
                 double distance = playerLoc.distance(petLoc);
                 double followDistance = plugin.getConfigManager().getFollowDistance();
                 double teleportDistance = plugin.getConfigManager().getTeleportDistance();

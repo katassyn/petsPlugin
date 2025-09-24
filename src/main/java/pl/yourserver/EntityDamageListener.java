@@ -56,15 +56,22 @@ public class EntityDamageListener implements Listener {
             return;
         }
 
+        // Prevent pets from damaging anything
+        Entity damager = event.getDamager();
+        if (damager.hasMetadata("pet")) {
+            event.setCancelled(true);
+            return;
+        }
+
         // Sprawdź czy atakujący to gracz
-        if (event.getDamager() instanceof Player) {
-            Player attacker = (Player) event.getDamager();
+        if (damager instanceof Player) {
+            Player attacker = (Player) damager;
             handlePlayerAttack(attacker, event);
         }
 
         // Sprawdź czy obrońca to gracz
-        if (event.getEntity() instanceof Player) {
-            Player defender = (Player) event.getEntity();
+        if (entity instanceof Player) {
+            Player defender = (Player) entity;
             handlePlayerDefense(defender, event);
         }
     }

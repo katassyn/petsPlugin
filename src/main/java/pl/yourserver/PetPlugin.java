@@ -120,6 +120,7 @@ public class PetPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PetInteractListener(this), this);
         getServer().getPluginManager().registerEvents(new InventoryClickListener(this), this);
         getServer().getPluginManager().registerEvents(new EntityDamageListener(this), this);
+        getServer().getPluginManager().registerEvents(new PetTargetListener(), this);
         getServer().getPluginManager().registerEvents(petMoneyManager, this);
         getServer().getPluginManager().registerEvents(petInventoryManager, this);
         getServer().getPluginManager().registerEvents(petCombatManager, this);
@@ -141,6 +142,9 @@ public class PetPlugin extends JavaPlugin {
 
         // Task do aur petów (co 3 sekundy = 60 ticków)
         petAuraManager.runTaskTimer(this, 0L, 60L);
+
+        // Task dbający o bezpieczeństwo graczy przy agresywnych petach
+        new PetSafetyTask(this).runTaskTimer(this, 0L, 20L);
     }
 
     public static PetPlugin getInstance() {
