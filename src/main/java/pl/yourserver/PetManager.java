@@ -1,14 +1,5 @@
 package pl.yourserver;
 
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.MobDisguise;
-import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.PhantomWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -32,11 +23,13 @@ public class PetManager {
     private final PetPlugin plugin;
     private final Map<UUID, Pet> activePets;
     private final Map<UUID, List<Pet>> playerPets;
+    private final LibsDisguisesHook libsDisguisesHook;
 
     public PetManager(PetPlugin plugin) {
         this.plugin = plugin;
         this.activePets = new ConcurrentHashMap<>();
         this.playerPets = new ConcurrentHashMap<>();
+        this.libsDisguisesHook = new LibsDisguisesHook(plugin);
     }
 
     // Spawn peta w świecie
@@ -66,7 +59,7 @@ public class PetManager {
         configurePetEntity(owner, pet, entity);
 
         if (disguised) {
-            applyDisguise(entity, pet);
+            libsDisguisesHook.applyDisguise(entity, pet);
         }
     }
 
@@ -76,8 +69,8 @@ public class PetManager {
         if (pet != null && pet.getEntity() != null && !pet.getEntity().isDead()) {
             Entity entity = pet.getEntity();
 
-            if (isLibsDisguisesEnabled() && DisguiseAPI.isDisguised(entity)) {
-                DisguiseAPI.undisguiseToAll(entity);
+            if (isLibsDisguisesEnabled() && libsDisguisesHook.isDisguised(entity)) {
+                libsDisguisesHook.undisguise(entity);
             }
 
             entity.remove();
@@ -184,50 +177,8 @@ public class PetManager {
         activePets.put(owner.getUniqueId(), pet);
     }
 
-    private void applyDisguise(Entity entity, Pet pet) {
-        try {
-            DisguiseType disguiseType = DisguiseType.getType(pet.getType().getEntityType());
-
-            if (disguiseType == null || !disguiseType.isMob()) {
-                plugin.getLogger().warning("Unable to apply disguise for pet type: " + pet.getType().name());
-                return;
-            }
-
-            MobDisguise disguise = new MobDisguise(disguiseType);
-            disguise.setEntity(entity);
-            disguise.setReplaceSounds(true);
-            disguise.setKeepDisguiseOnPlayerTeleport(true);
-
-            FlagWatcher watcher = disguise.getWatcher();
-            if (watcher != null) {
-                watcher.setCustomName(entity.getCustomName());
-                watcher.setCustomNameVisible(entity.isCustomNameVisible());
-
-                if (watcher instanceof AgeableWatcher ageableWatcher) {
-                    ageableWatcher.setBaby(true);
-                }
-
-                if (watcher instanceof ZombieWatcher zombieWatcher && pet.getType() == PetType.ZOMBIE) {
-                    zombieWatcher.setBaby(true);
-                }
-
-                if (watcher instanceof SlimeWatcher slimeWatcher) {
-                    slimeWatcher.setSize(1);
-                }
-
-                if (watcher instanceof PhantomWatcher phantomWatcher) {
-                    phantomWatcher.setSize(1);
-                }
-            }
-
-            DisguiseAPI.disguiseEntity(entity, disguise);
-        } catch (Exception ex) {
-            plugin.getLogger().warning("Failed to disguise pet " + pet.getType().name() + ": " + ex.getMessage());
-        }
-    }
-
     private boolean isLibsDisguisesEnabled() {
-        return plugin.getIntegrationManager() != null && plugin.getIntegrationManager().isLibsDisguisesEnabled();
+        return libsDisguisesHook.canUseDisguises();
     }
 
     // Przełączanie aktywnego peta
