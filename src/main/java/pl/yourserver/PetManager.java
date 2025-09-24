@@ -1,8 +1,17 @@
 package pl.yourserver;
 
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PhantomWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -32,91 +41,32 @@ public class PetManager {
 
     // Spawn peta w świecie
     public void spawnPet(Player owner, Pet pet) {
-        if (pet == null || !pet.isActive()) return;
+        if (pet == null || !pet.isActive()) {
+            return;
+        }
 
         // Despawn poprzedniego peta jeśli istnieje
         despawnPet(owner);
 
         Location spawnLoc = owner.getLocation().add(1, 0, 1);
-        Entity entity = null;
+        Entity entity;
+        boolean disguised = false;
 
-        // Handle special mob types
-        EntityType entityType = pet.getType().getEntityType();
-
-        // Giant pet spawns as normal Zombie
-        if (entityType == EntityType.GIANT) {
-            entityType = EntityType.ZOMBIE;
+        if (isLibsDisguisesEnabled()) {
+            entity = spawnWolfBase(owner, spawnLoc);
+            disguised = entity != null;
+        } else {
+            entity = spawnLegacyPet(owner, pet, spawnLoc);
         }
 
-        entity = owner.getWorld().spawnEntity(spawnLoc, entityType);
-
-        // Make babies when possible for miniature size
-        if (entity instanceof Ageable) {
-            Ageable ageable = (Ageable) entity;
-            ageable.setBaby();
-            ageable.setAgeLock(true);
-        } else if (entity instanceof Zombie) {
-            Zombie zombie = (Zombie) entity;
-            // Zombie pet is always baby, Giant pet (spawned as zombie) is normal size
-            if (pet.getType() == PetType.ZOMBIE) {
-                zombie.setBaby(true);
-            }
-            // Giant pet stays normal zombie size
-        } else if (entity instanceof Slime) {
-            ((Slime) entity).setSize(1); // Smallest slime
-        } else if (entity instanceof Phantom) {
-            ((Phantom) entity).setSize(1); // Smallest phantom
+        if (entity == null) {
+            return;
         }
 
-        if (entity != null) {
-            // Ustaw metadata i właściwości
-            entity.setMetadata("pet", new FixedMetadataValue(plugin, true));
-            entity.setMetadata("petOwner", new FixedMetadataValue(plugin, owner.getUniqueId().toString()));
-            entity.setMetadata("petUUID", new FixedMetadataValue(plugin, pet.getUuid().toString()));
+        configurePetEntity(owner, pet, entity);
 
-            // Ustaw nazwę peta
-            String petName = TextUtil.colorize(
-                    pet.getRarity().getColor() + pet.getType().getDisplayName() +
-                            " &7[Lv." + pet.getLevel() + "]"
-            );
-            entity.setCustomName(petName);
-            entity.setCustomNameVisible(true);
-
-            // Ustaw AI i inne właściwości
-            if (entity instanceof LivingEntity) {
-                LivingEntity living = (LivingEntity) entity;
-                living.setAI(true); // Włącz AI żeby pety mogły biegać
-                living.setInvulnerable(true);
-                living.setCollidable(true);
-                living.setSilent(true);
-                living.setRemoveWhenFarAway(false);
-
-                // Ustaw prędkość ruchu peta (walkSpeed)
-                try {
-                    living.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MOVEMENT_SPEED)
-                            .setBaseValue(0.3); // Podstawowa prędkość peta
-                } catch (Exception ignored) {
-                    // Niektóre mobs mogą nie mieć tego atrybutu
-                }
-
-                // Wyczyść targets i goals żeby pet nie atakował innych mobów
-                if (entity instanceof org.bukkit.entity.Mob) {
-                    org.bukkit.entity.Mob mob = (org.bukkit.entity.Mob) entity;
-                    mob.setTarget(null); // Nie atakuj nikogo
-                }
-
-                // Ustaw odporność na ogień/słońce
-                entity.setFireTicks(0);
-                entity.setVisualFire(false);
-
-                // Dodaj efekt świecenia dla mythic petów
-                if (pet.getRarity() == PetRarity.MYTHIC) {
-                    living.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1, false, false));
-                }
-            }
-
-            pet.setEntity(entity);
-            activePets.put(owner.getUniqueId(), pet);
+        if (disguised) {
+            applyDisguise(entity, pet);
         }
     }
 
@@ -124,7 +74,13 @@ public class PetManager {
     public void despawnPet(Player owner) {
         Pet pet = activePets.get(owner.getUniqueId());
         if (pet != null && pet.getEntity() != null && !pet.getEntity().isDead()) {
-            pet.getEntity().remove();
+            Entity entity = pet.getEntity();
+
+            if (isLibsDisguisesEnabled() && DisguiseAPI.isDisguised(entity)) {
+                DisguiseAPI.undisguiseToAll(entity);
+            }
+
+            entity.remove();
             pet.setEntity(null);
 
             // Wyczyść pozycję peta z PetFollowTask
@@ -133,6 +89,145 @@ public class PetManager {
             }
         }
         activePets.remove(owner.getUniqueId());
+    }
+
+    private Entity spawnWolfBase(Player owner, Location spawnLoc) {
+        Entity entity = owner.getWorld().spawnEntity(spawnLoc, EntityType.WOLF);
+        if (entity instanceof Wolf wolf) {
+            wolf.setTamed(true);
+            wolf.setOwner(owner);
+            wolf.setSitting(false);
+            wolf.setAngry(false);
+            wolf.setAdult();
+            wolf.setAware(true);
+            wolf.setCanPickupItems(false);
+            try {
+                if (wolf.getAttribute(Attribute.GENERIC_FOLLOW_RANGE) != null) {
+                    wolf.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(48.0);
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        return entity;
+    }
+
+    private Entity spawnLegacyPet(Player owner, Pet pet, Location spawnLoc) {
+        EntityType entityType = pet.getType().getEntityType();
+
+        if (entityType == EntityType.GIANT) {
+            entityType = EntityType.ZOMBIE;
+        }
+
+        Entity entity = owner.getWorld().spawnEntity(spawnLoc, entityType);
+
+        if (entity instanceof Ageable ageable) {
+            ageable.setBaby();
+            ageable.setAgeLock(true);
+        } else if (entity instanceof Zombie zombie) {
+            if (pet.getType() == PetType.ZOMBIE) {
+                zombie.setBaby(true);
+            }
+        } else if (entity instanceof Slime slime) {
+            slime.setSize(1);
+        } else if (entity instanceof Phantom phantom) {
+            phantom.setSize(1);
+        }
+
+        return entity;
+    }
+
+    private void configurePetEntity(Player owner, Pet pet, Entity entity) {
+        entity.setMetadata("pet", new FixedMetadataValue(plugin, true));
+        entity.setMetadata("petOwner", new FixedMetadataValue(plugin, owner.getUniqueId().toString()));
+        entity.setMetadata("petUUID", new FixedMetadataValue(plugin, pet.getUuid().toString()));
+
+        String petName = TextUtil.colorize(
+                pet.getRarity().getColor() + pet.getType().getDisplayName() + " &7[Lv." + pet.getLevel() + "]"
+        );
+        entity.setCustomName(petName);
+        entity.setCustomNameVisible(true);
+
+        if (entity instanceof LivingEntity living) {
+            living.setAI(true);
+            living.setInvulnerable(true);
+            living.setCollidable(true);
+            living.setSilent(true);
+            living.setRemoveWhenFarAway(false);
+
+            try {
+                if (living.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED) != null) {
+                    living.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3);
+                }
+            } catch (Exception ignored) {
+            }
+
+            try {
+                if (living.getAttribute(Attribute.GENERIC_FOLLOW_RANGE) != null) {
+                    living.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(48.0);
+                }
+            } catch (Exception ignored) {
+            }
+
+            if (living instanceof Mob mob) {
+                mob.setTarget(null);
+            }
+
+            living.setFireTicks(0);
+            entity.setVisualFire(false);
+
+            if (pet.getRarity() == PetRarity.MYTHIC) {
+                living.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1, false, false));
+            }
+        }
+
+        pet.setEntity(entity);
+        activePets.put(owner.getUniqueId(), pet);
+    }
+
+    private void applyDisguise(Entity entity, Pet pet) {
+        try {
+            DisguiseType disguiseType = DisguiseType.getType(pet.getType().getEntityType());
+
+            if (disguiseType == null || !disguiseType.isMob()) {
+                plugin.getLogger().warning("Unable to apply disguise for pet type: " + pet.getType().name());
+                return;
+            }
+
+            MobDisguise disguise = new MobDisguise(disguiseType);
+            disguise.setEntity(entity);
+            disguise.setReplaceSounds(true);
+            disguise.setKeepDisguiseOnPlayerTeleport(true);
+
+            FlagWatcher watcher = disguise.getWatcher();
+            if (watcher != null) {
+                watcher.setCustomName(entity.getCustomName());
+                watcher.setCustomNameVisible(entity.isCustomNameVisible());
+
+                if (watcher instanceof AgeableWatcher ageableWatcher) {
+                    ageableWatcher.setBaby(true);
+                }
+
+                if (watcher instanceof ZombieWatcher zombieWatcher && pet.getType() == PetType.ZOMBIE) {
+                    zombieWatcher.setBaby(true);
+                }
+
+                if (watcher instanceof SlimeWatcher slimeWatcher) {
+                    slimeWatcher.setSize(1);
+                }
+
+                if (watcher instanceof PhantomWatcher phantomWatcher) {
+                    phantomWatcher.setSize(1);
+                }
+            }
+
+            DisguiseAPI.disguiseEntity(entity, disguise);
+        } catch (Exception ex) {
+            plugin.getLogger().warning("Failed to disguise pet " + pet.getType().name() + ": " + ex.getMessage());
+        }
+    }
+
+    private boolean isLibsDisguisesEnabled() {
+        return plugin.getIntegrationManager() != null && plugin.getIntegrationManager().isLibsDisguisesEnabled();
     }
 
     // Przełączanie aktywnego peta
