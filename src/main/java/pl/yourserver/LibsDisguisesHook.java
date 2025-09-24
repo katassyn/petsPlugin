@@ -149,7 +149,11 @@ public class LibsDisguisesHook {
             disguiseTypeClass = Class.forName("me.libraryaddict.disguise.disguisetypes.DisguiseType");
             Class<?> disguiseClass = Class.forName("me.libraryaddict.disguise.disguisetypes.Disguise");
             Class<?> mobDisguiseClass = Class.forName("me.libraryaddict.disguise.disguisetypes.MobDisguise");
-            Class<?> flagWatcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers.FlagWatcher");
+            Class<?> flagWatcherClass = resolveWatcherBaseClass();
+
+            if (flagWatcherClass == null) {
+                plugin.getLogger().warning("Unable to locate the LibsDisguises watcher base class. Some pet features may be limited.");
+            }
 
             try {
                 mobDisguiseConstructor = mobDisguiseClass.getConstructor(disguiseTypeClass);
@@ -286,6 +290,23 @@ public class LibsDisguisesHook {
                     break;
             }
         }
+    }
+
+    private Class<?> resolveWatcherBaseClass() {
+        String[] watcherCandidates = new String[]{
+                "me.libraryaddict.disguise.disguisetypes.watchers.FlagWatcher",
+                "me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher",
+                "me.libraryaddict.disguise.disguisetypes.watchers.DisguiseWatcher"
+        };
+
+        for (String className : watcherCandidates) {
+            Class<?> watcherClass = findClass(className);
+            if (watcherClass != null) {
+                return watcherClass;
+            }
+        }
+
+        return null;
     }
 
     private Class<?> findClass(String name) {
