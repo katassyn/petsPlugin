@@ -1,0 +1,81 @@
+name: PetPlugin
+version: '1.0.0'
+main: pl.yourserver.PetPlugin
+api-version: '1.20'
+description: 'Advanced pet system for MMO RPG Minecraft server with 31 different pets'
+authors: [YourServer]
+website: 'https://yourserver.pl'
+
+# Soft dependencies (optional plugins that enhance functionality)
+softdepend:
+  - Vault
+  - PlaceholderAPI
+  - MythicMobs
+  - ProtocolLib
+  - FishingPlugin
+  - MyDungeonTeleportPlugin
+  - MyExperiencePlugin
+  - mineSystemPlugin
+  - farmingPlugin
+  - beesPlugin
+  - MyCraftingPlugin2
+  - IngredientPouchPlugin
+
+# Load order
+load: POSTWORLD
+commands:
+  pet:
+    description: Main pet command
+    usage: /<command>
+    aliases: [pets]
+
+permissions:
+  pet.use:
+    description: Allows using the pet system
+    default: false
+
+  pet.backpack:
+    description: Allows using donkey pet backpack
+    default: true
+
+  pet.admin:
+    description: Admin permissions for pet system
+    default: op
+    children:
+      pet.use: true
+      pet.backpack: true
+      pet.give: true
+      pet.spawn: true
+      pet.despawn: true
+      pet.level: true
+      pet.exp: true
+      pet.reload: true
+      pet.debug: true
+
+  pet.give:
+    description: Give pets to players
+    default: op
+
+  pet.spawn:
+    description: Force spawn pets
+    default: op
+
+  pet.despawn:
+    description: Force despawn pets
+    default: op
+
+  pet.level:
+    description: Set pet levels
+    default: op
+
+  pet.exp:
+    description: Give exp to pets
+    default: op
+
+  pet.reload:
+    description: Reload configuration
+    default: op
+
+  pet.debug:
+    description: View debug information
+    default: op

@@ -1,0 +1,630 @@
+# Pet Plugin - Pet Configuration with Exact Values
+# This file contains all pet-specific settings with finalized values
+
+# Experience formula settings
+experience:
+  # Base experience required for level 2
+  base-exp: 5
+  # Level multiplier (exp = base * level^multiplier + (level * additional))
+  level-multiplier: 2.2
+  additional-per-level: 10
+
+  # Experience gained per mob kill
+  mob-kill-exp: 1.0
+
+  # Boss multipliers
+  boss-exp-multiplier: 5.0
+  mini-boss-exp-multiplier: 3.0
+
+# Effect power scaling - Mechanic: +1% per level + doubling at milestones
+scaling:
+  # Each level adds 1% to effect power
+  per-level-bonus: 0.01
+
+  # Milestone multipliers (these multiply the total power)
+  level-25-multiplier: 2.0   # x2 power at level 25
+  level-50-multiplier: 2.0   # x4 total (2x2) at level 50
+  level-75-multiplier: 2.0   # x8 total (2x2x2) at level 75
+  level-100-multiplier: 2.0  # x16 total (2x2x2x2) at level 100
+
+# Pet-specific configurations with exact values
+pets:
+  # MAGIC Pets (Max Level 25)
+  COW:
+    display-name: "&9Cow"
+    rarity: MAGIC
+    max-level: 25
+    effects:
+      health-bonus:
+        base: 10.0
+        per-level: 2.0
+        description: "+%value% HP"
+        # Lvl 1: 12 HP, Lvl 25: 120 HP
+    placeholders:
+      - "pet_cow_health"
+
+  PIG:
+    display-name: "&9Pig"
+    rarity: MAGIC
+    max-level: 25
+    effects:
+      money-chance:
+        base: 5.0
+        min-money: 100
+        max-money: 200
+        description: "%value%% chance for $%min_money%-%max_money% on kill"
+        # Lvl 1: 5%, Lvl 25: 12.5%
+    placeholders:
+      - "pet_pig_money_chance"
+
+  SHEEP:
+    display-name: "&9Sheep"
+    rarity: MAGIC
+    max-level: 25
+    effects:
+      heal-amount:
+        base: 10.0
+        per-level: 2.0
+        cooldown: 20
+        description: "Heals %value% HP every 20s"
+        # Lvl 1: 12 HP, Lvl 25: 120 HP
+    placeholders:
+      - "pet_sheep_heal_amount"
+
+  # EXTRAORDINARY Pets (Max Level 40)
+  CHICKEN:
+    display-name: "&5Chicken"
+    rarity: EXTRAORDINARY
+    max-level: 40
+    effects:
+      luck-bonus:
+        base: 0.0
+        per-level: 0.25
+        description: "+%value% Luck attribute"
+        # Lvl 1: +0.25, Lvl 25: +12.5, Lvl 40: +20
+    placeholders:
+      - "pet_chicken_luck"
+
+  DONKEY:
+    display-name: "&5Donkey"
+    rarity: EXTRAORDINARY
+    max-level: 40
+    effects:
+      extra-inventory:
+        base-slots: 9
+        level-25-slots: 27
+        description: "Extra inventory (%value% slots)"
+        # Lvl 1-24: 9 slots, Lvl 25+: 27 slots
+    placeholders:
+      - "pet_donkey_extra_storage"
+
+  SNOW_GOLEM:
+    display-name: "&5Snow Golem"
+    rarity: EXTRAORDINARY
+    max-level: 40
+    effects:
+      slow-aura:
+        base: 5.0
+        description: "Slows enemies in %value% block radius"
+        # Lvl 1: 5 blocks, Lvl 25: 12.5 blocks, Lvl 40: 14 blocks
+    placeholders:
+      - "pet_snowgolem_slow"
+
+  IRON_GOLEM:
+    display-name: "&5Iron Golem"
+    rarity: EXTRAORDINARY
+    max-level: 40
+    effects:
+      power-strike:
+        base: 2.0
+        cooldown: 30
+        description: "%value%x damage every 30s"
+        # Lvl 1: 2x, Lvl 25: 5x, Lvl 40: 6x
+    placeholders:
+      - "pet_irongolem_damage_boost"
+
+  # LEGENDARY Pets (Max Level 50)
+  SQUID:
+    display-name: "&6Squid"
+    rarity: LEGENDARY
+    max-level: 50
+    effects:
+      fishing-chest-bonus:
+        base: 15.0
+        description: "+%value%% fishing chest weight"
+        # Lvl 1: 15%, Lvl 25: 37.5%, Lvl 50: 90%
+    placeholders:
+      - "pet_fishing_chest_bonus"
+
+  TURTLE:
+    display-name: "&6Turtle"
+    rarity: LEGENDARY
+    max-level: 50
+    effects:
+      mob-damage-reduction:
+        base: 1.0
+        description: "-%value%% damage from mobs"
+        # Lvl 1: 1%, Lvl 25: 2.5%, Lvl 50: 6%
+    placeholders:
+      - "pet_turtle_damage_reduction"
+
+  LLAMA:
+    display-name: "&6Llama"
+    rarity: LEGENDARY
+    max-level: 50
+    effects:
+      mob-damage-bonus:
+        base: 2.0
+        description: "+%value%% damage to mobs"
+        # Lvl 1: 2%, Lvl 25: 5%, Lvl 50: 12%
+    placeholders:
+      - "pet_llama_mob_damage"
+
+  ENDERMAN:
+    display-name: "&6Enderman"
+    rarity: LEGENDARY
+    max-level: 50
+    effects:
+      free-tp-chance:
+        base: 7.5
+        description: "%value%% free dungeon teleport"
+        # Lvl 1: 7.5%, Lvl 25: 18.75%, Lvl 50: 45%
+    placeholders:
+      - "pet_dungeon_free_tp_chance"
+
+  WITCH:
+    display-name: "&6Witch"
+    rarity: LEGENDARY
+    max-level: 50
+    effects:
+      potion-duration:
+        base: 15.0
+        description: "+%value%% potion duration"
+        # Lvl 1: 15%, Lvl 25: 37.5%, Lvl 50: 90%
+    placeholders:
+      - "pet_alchemy_potion_duration_bonus"
+
+  HUSK:
+    display-name: "&6Husk"
+    rarity: LEGENDARY
+    max-level: 50
+    effects:
+      mobsphere-chance:
+        base: 12.0
+        description: "+%value%% mob sphere weight"
+        # Lvl 1: 12%, Lvl 25: 30%, Lvl 50: 72%
+    placeholders:
+      - "pet_mine_mobsphere_chance"
+
+  MOOSHROOM:
+    display-name: "&6Mooshroom"
+    rarity: LEGENDARY
+    max-level: 50
+    effects:
+      farm-speed:
+        base: 20.0
+        description: "+%value%% farm growth speed"
+        # Lvl 1: 20%, Lvl 25: 50%, Lvl 50: 120%
+    placeholders:
+      - "pet_farm_growth_speed"
+
+  FROG:
+    display-name: "&6Frog"
+    rarity: LEGENDARY
+    max-level: 50
+    effects:
+      honey-speed:
+        base: 15.0
+        description: "+%value%% honey production"
+        # Lvl 1: 15%, Lvl 25: 37.5%, Lvl 50: 90%
+    placeholders:
+      - "pet_beekeeper_honey_speed"
+
+  # UNIQUE Pets (Max Level 75) + Special Effects at 75
+  WOLF:
+    display-name: "&e&lWolf"
+    rarity: UNIQUE
+    max-level: 75
+    effects:
+      pvp-damage:
+        base: 5.0
+        description: "+%value%% PvP damage"
+      pvp-damage-reduction:
+        base: 5.0
+        description: "-%value%% PvP damage taken"
+        # Lvl 1: +5% dmg & -5% taken, Lvl 75: +40% & -40%
+    special-effect:
+      level: 75
+      lifesteal: 15.0
+      description: "15% lifesteal from PvP damage"
+    placeholders:
+      - "pet_wolf_pvp_damage"
+      - "pet_wolf_pvp_damage_reduction"
+      - "pet_wolf_pvp_lifesteal"
+
+  BEE:
+    display-name: "&e&lBee"
+    rarity: UNIQUE
+    max-level: 75
+    effects:
+      honey-quality:
+        base: 25.0
+        description: "+%value%% honey quality weight"
+    special-effect:
+      level: 75
+      double-honey-chance: 25.0
+      description: "25% chance to double honey production"
+    placeholders:
+      - "pet_beekeeper_honey_quality"
+      - "pet_beekeeper_double_honey"
+
+  WANDERING_TRADER:
+    display-name: "&e&lWandering Trader"
+    rarity: UNIQUE
+    max-level: 75
+    effects:
+      craft-cost-reduction:
+        base: 1.43
+        description: "-%value%% crafting cost in $"
+        # Lvl 1: -1.43%, Lvl 75: -20%
+    special-effect:
+      level: 75
+      refund-chance: 5.0
+      description: "5% chance for full $ refund on crafting"
+    placeholders:
+      - "pet_crafting_cost_reduction"
+      - "pet_crafting_refund_chance"
+
+  PANDA:
+    display-name: "&e&lPanda"
+    rarity: UNIQUE
+    max-level: 75
+    effects:
+      farm-storage:
+        base: 30.0
+        description: "+%value%% farm storage"
+        # Lvl 1: +30%, Lvl 75: +240%
+    special-effect:
+      level: 75
+      double-harvest: 25.0
+      description: "25% double harvest chance"
+    placeholders:
+      - "pet_farm_storage_bonus"
+      - "pet_farm_double_harvest_chance"
+
+  # Dungeon damage pets
+  ZOMBIE:
+    display-name: "&e&lZombie"
+    rarity: UNIQUE
+    max-level: 75
+    effects:
+      dungeon-damage:
+        base: 3.0
+        dungeons: ["q1", "q3"]
+        description: "+%value%% damage in Q1/Q3"
+        # Lvl 1: +3%, Lvl 75: +24%
+    special-effect:
+      level: 75
+      execute-threshold: 10.0
+      description: "Execute bosses at 10% HP in Q1/Q3"
+    placeholders:
+      - "pet_dungeon_q1_damage"
+      - "pet_dungeon_q3_damage"
+
+  SKELETON:
+    display-name: "&e&lSkeleton"
+    rarity: UNIQUE
+    max-level: 75
+    effects:
+      dungeon-damage:
+        base: 3.0
+        dungeons: ["q6", "q7"]
+        description: "+%value%% damage in Q6/Q7"
+    special-effect:
+      level: 75
+      execute-threshold: 10.0
+      description: "Execute bosses at 10% HP in Q6/Q7"
+    placeholders:
+      - "pet_dungeon_q6_damage"
+      - "pet_dungeon_q7_damage"
+
+  SPIDER:
+    display-name: "&e&lSpider"
+    rarity: UNIQUE
+    max-level: 75
+    effects:
+      dungeon-damage:
+        base: 3.0
+        dungeons: ["q2", "q4"]
+        description: "+%value%% damage in Q2/Q4"
+    special-effect:
+      level: 75
+      execute-threshold: 10.0
+      description: "Execute bosses at 10% HP in Q2/Q4"
+    placeholders:
+      - "pet_dungeon_q2_damage"
+      - "pet_dungeon_q4_damage"
+
+  CREEPER:
+    display-name: "&e&lCreeper"
+    rarity: UNIQUE
+    max-level: 75
+    effects:
+      dungeon-damage:
+        base: 3.0
+        dungeons: ["q5", "q8"]
+        description: "+%value%% damage in Q5/Q8"
+    special-effect:
+      level: 75
+      execute-threshold: 10.0
+      description: "Execute bosses at 10% HP in Q5/Q8"
+    placeholders:
+      - "pet_dungeon_q5_damage"
+      - "pet_dungeon_q8_damage"
+
+  SLIME:
+    display-name: "&e&lSlime"
+    rarity: UNIQUE
+    max-level: 75
+    effects:
+      dungeon-damage:
+        base: 3.0
+        dungeons: ["q9", "q10"]
+        description: "+%value%% damage in Q9/Q10"
+    special-effect:
+      level: 75
+      execute-threshold: 10.0
+      description: "Execute bosses at 10% HP in Q9/Q10"
+    placeholders:
+      - "pet_dungeon_q9_damage"
+      - "pet_dungeon_q10_damage"
+
+  PHANTOM:
+    display-name: "&e&lPhantom"
+    rarity: UNIQUE
+    max-level: 75
+    effects:
+      ocean-treasure:
+        base: 10.0
+        description: "+%value%% ocean treasure weight"
+        # Lvl 1: +10%, Lvl 75: +80%
+    special-effect:
+      level: 75
+      rune-bonus: 5.0
+      description: "+5% rune weight bonus"
+    placeholders:
+      - "pet_fishing_ocean_treasure_chance"
+      - "pet_fishing_rune_bonus"
+
+  GLOW_SQUID:
+    display-name: "&e&lGlow Squid"
+    rarity: UNIQUE
+    max-level: 75
+    effects:
+      rare-ore-chance:
+        base: 18.0
+        description: "+%value%% rare ore chance"
+        # Lvl 1: +18%, Lvl 75: +144%
+    special-effect:
+      level: 75
+      ore-duplication: 25.0
+      description: "25% chance to duplicate mined ore"
+    placeholders:
+      - "pet_mine_rare_ore_chance"
+      - "pet_mine_ore_duplication"
+
+  # MYTHIC Pets (Max Level 100) + Special Effects at 100
+  GUARDIAN:
+    display-name: "&c&lGUARDIAN"
+    rarity: MYTHIC
+    max-level: 100
+    effects:
+      all-fishing:
+        base: 10.0
+        description: "+%value%% weight for all fishing bonuses"
+        # Lvl 1: +10%, Lvl 100: +160%
+    special-effect:
+      level: 100
+      fish-sell-multiplier: 100
+      description: "100x fish sell price"
+    placeholders:
+      - "pet_fishing_all_bonuses"
+      - "pet_fishing_sell_multiplier"
+
+  SNIFFER:
+    display-name: "&c&lSNIFFER"
+    rarity: MYTHIC
+    max-level: 100
+    effects:
+      all-mining:
+        base: 18.0
+        description: "+%value%% weight for all mining bonuses"
+        # Lvl 1: +18%, Lvl 100: +288%
+    special-effect:
+      level: 100
+      ore-sell-multiplier: 2
+      description: "2x ore sell price"
+    placeholders:
+      - "pet_mine_all_bonuses"
+      - "pet_mine_ore_sell_multiplier"
+
+  WITHER_SKELETON:
+    display-name: "&c&lWITHER SKELETON"
+    rarity: MYTHIC
+    max-level: 100
+    effects:
+      special-materials:
+        base: 6.25
+        description: "+%value%% special materials chance"
+        # Lvl 1: 6.25%, Lvl 100: 100%
+    special-effect:
+      level: 100
+      fruit-sell-multiplier: 3
+      description: "3x fruit sell price"
+    placeholders:
+      - "pet_farm_special_material_chance"
+      - "pet_farm_fruit_sell_multiplier"
+
+  ENDER_DRAGON:
+    display-name: "&c&lENDER DRAGON"
+    rarity: MYTHIC
+    max-level: 100
+    effects:
+      extra-slot: 1
+      duplicate-effects: true
+      description: "+1 slot & duplicates 2nd pet effects"
+    special-effect:
+      level: 100
+      double-duplication: true
+      description: "Doubles the duplication effect (2x copy of 2nd pet)"
+    placeholders:
+      - "pet_slot_bonus"
+      - "pet_effect_duplicate"
+    limit: 1  # Max 1 per player
+
+  WARDEN:
+    display-name: "&c&lWARDEN"
+    rarity: MYTHIC
+    max-level: 100
+    effects:
+      extra-slots: 2
+      description: "+2 pet slots"
+    special-effect:
+      level: 100
+      extra-slots-bonus: 1
+      description: "+3 pet slots total at level 100"
+    placeholders:
+      - "pet_slot_bonus"
+    limit: 1  # Max 1 per player
+
+  WITHER:
+    display-name: "&c&lWITHER"
+    rarity: MYTHIC
+    max-level: 100
+    effects:
+      boss-damage:
+        base: 5.0
+        description: "+%value%% damage to all bosses"
+        # Lvl 1: +5%, Lvl 100: +80%
+    special-effect:
+      level: 100
+      special-wither: true
+      wither-damage: 250
+      wither-duration: 5
+      description: "Applies special wither: 250dmg/s for 5s"
+    placeholders:
+      - "pet_mythicmobs_boss_damage"
+      - "pet_mythicmobs_boss_wither"
+
+  GIANT:
+    display-name: "&c&lGIANT"
+    rarity: MYTHIC
+    max-level: 100
+    effects:
+      mythic-items:
+        base: 5.0
+        description: "+%value%% mythic items weight"
+        # Lvl 1: +5%, Lvl 100: +80%
+    special-effect:
+      level: 100
+      double-mythic: true
+      description: "Doubles mythic item chance"
+    placeholders:
+      - "pet_mythicmobs_item_chance"
+      - "pet_mythicmobs_double_chance"
+
+# Feeding system configuration
+feeding:
+  # Feed pet every X levels (must have andermant to level up every 5 levels)
+  required-every-levels: 5
+
+  # Andermant requirements
+  andermant:
+    # Base cost for first feeding (level 5)
+    base-cost: 3
+    # Cost multiplier per feeding tier: ((level / 5) + 1) * base-cost
+    cost-formula: "((level / 5) + 1) * 3"
+
+    # Integration with IngredientPouchPlugin
+    ingredient-pouch:
+      enabled: true
+      item-key: "andermant"
+      item-id: "small_amethyst_bud"
+      display-name: "&5&lAndermant"
+      lore:
+        - "&o&7Premium currency"
+
+# Pet slot system
+pet-slots:
+  # Base slots every player has
+  base-slots: 1
+
+  # Maximum total slots possible
+  max-slots: 4
+
+  # Slot bonuses from specific pets
+  slot-bonuses:
+    ENDER_DRAGON: 1  # +1 slot
+    WARDEN: 2        # +2 slots (3 at level 100)
+
+  # Pet limits (only certain pets are limited)
+  pet-limits:
+    ENDER_DRAGON: 1  # Max 1 per player
+    WARDEN: 1        # Max 1 per player
+    # All other pets: max 1 of each type per player
+
+# Plugin integrations
+integrations:
+  # Required plugins for core functionality
+  required:
+    - "Vault"
+    - "PlaceholderAPI"
+
+  # Optional plugins for extended features
+  optional:
+    fishingplugin: "FishingPlugin"
+    mydungeonteleportplugin: "MyDungeonTeleportPlugin"
+    myexperienceplugin: "MyExperiencePlugin"
+    minesystemplugin: "MineSystemPlugin"
+    farmingplugin: "FarmingPlugin"
+    beesplugin: "beesPlugin"
+    mycraftingplugin2: "MyCraftingPlugin2"
+    mythicmobs: "MythicMobs"
+    ingredientpouchplugin: "IngredientPouchPlugin"
+
+# Boss damage configuration (for Wither pet)
+boss-damage:
+  # List of boss mythic IDs that receive bonus damage from Wither pet
+  target-bosses:
+    - "boss_skeleton_king"
+    - "boss_undead_lord"
+    - "boss_dragon_ancient"
+    - "boss_void_crusher"
+    - "boss_death_knight"
+    - "boss_elder_guardian"
+    # Add more boss IDs as needed
+
+# Visual system for baby pets
+visual-system:
+  # Enable baby pet followers
+  baby-pets: true
+
+  # Baby pet settings
+  baby-settings:
+    # Scale of baby pets (0.5 = half size)
+    scale: 0.6
+
+    # Follow distance
+    follow-distance: 2.0
+
+    # Maximum distance before teleporting to player
+    max-distance: 10.0
+
+    # Update interval for pet AI (in ticks)
+    update-interval: 10
+
+    # Hide pet name tags
+    hide-nametags: false
+
+    # Pet despawn when player goes offline
+    despawn-on-logout: true

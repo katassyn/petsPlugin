@@ -1,0 +1,268 @@
+# PetPlugin Configuration
+# Version: 1.0.0
+# Author: YourServer
+
+# Database settings
+database:
+  type: "SQLITE" # Options: SQLITE, MYSQL
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "pets"
+    username: "root"
+    password: ""
+
+# General settings
+settings:
+  # Maximum pets per player (without bonuses)
+  max-pets-default: 1
+
+  # Pet follow distance
+  follow-distance: 5.0
+
+  # Pet teleport distance (if too far)
+  teleport-distance: 10.0
+
+  # Enable pet particles
+  enable-particles: true
+
+  # Enable pet sounds
+  enable-sounds: true
+
+  # Experience per mob kill
+  exp-per-kill: 1.0
+
+  # Experience formula multiplier
+  exp-multiplier: 1.0
+
+# Pet effect settings
+effects:
+  # Effect tick rate (in ticks, 20 = 1 second)
+  tick-rate: 20
+
+  # Effect values (easy to modify)
+  cow:
+    bonus-health: 4.0
+
+  pig:
+    money-chance: 5.0 # Percent
+    money-min: 1
+    money-max: 10
+
+  sheep:
+    heal-amount: 2.0
+    heal-cooldown: 20 # Seconds
+
+  chicken:
+    luck-level: 1
+
+  snow-golem:
+    slow-radius: 5.0
+    slow-duration: 3 # Seconds
+
+  iron-golem:
+    damage-multiplier: 2.0
+    cooldown: 15 # Seconds
+
+  squid:
+    chest-chance-bonus: 15.0 # Percent
+
+  turtle:
+    damage-reduction: 10.0 # Percent
+
+  llama:
+    mob-damage-bonus: 15.0 # Percent
+
+  enderman:
+    free-tp-chance: 10.0 # Percent
+
+  witch:
+    potion-duration-bonus: 25.0 # Percent
+
+  husk:
+    mobsphere-chance-bonus: 12.0 # Percent
+
+  mooshroom:
+    farm-speed-bonus: 20.0 # Percent
+
+  frog:
+    honey-speed-bonus: 15.0 # Percent
+
+  wolf:
+    pvp-damage-bonus: 20.0 # Percent
+    lifesteal: 15.0 # Percent (special effect)
+
+  bee:
+    honey-quality-bonus: 25.0 # Percent
+    rare-honey-chance: 15.0 # Percent
+
+  wandering-trader:
+    craft-cost-reduction: 15.0 # Percent
+    refund-chance: 10.0 # Percent (special effect)
+
+  panda:
+    farm-yield-bonus: 30.0 # Percent
+
+  # Dungeon pets damage bonus
+  dungeon-pets:
+    damage-bonus: 20.0 # Percent
+
+  phantom:
+    treasure-chance-bonus: 20.0 # Percent
+
+  glow-squid:
+    rare-ore-chance-bonus: 18.0 # Percent
+
+  # Mythic pets
+  guardian:
+    all-fishing-bonus: 30.0 # Percent
+
+  sniffer:
+    all-mining-bonus: 30.0 # Percent
+
+  wither-skeleton:
+    special-material-chance: 40.0 # Percent
+
+  wither:
+    boss-damage-bonus: 35.0 # Percent
+
+  giant:
+    mythic-item-chance-bonus: 50.0 # Percent
+
+# Feeding settings
+feeding:
+  # Andermant item settings
+  andermant-item:
+    material: "SMALL_AMETHYST_BUD"
+    name: "&5&lAndermant"
+    lore:
+      - "&o&7Premium currency"
+
+  # Feed amounts required (base * (level/5))
+  base-feed-amount: 100
+
+  # Levels that require feeding
+  feed-levels: [4, 9, 14, 19, 24, 29, 34, 39, 44, 49, 54, 59, 64, 69, 74, 79, 84, 89, 94, 99]
+
+# Level milestones
+milestones:
+  # Bonus multipliers at milestones
+  level-25-bonus: 0.25
+  level-50-bonus: 0.35
+  level-75-bonus: 0.45
+  level-100-bonus: 0.60
+
+# Boss list for Wither pet
+# Add MythicMobs boss names here
+bosses:
+  - "SkeletalKnight"
+  - "SkeletonKing"
+  - "AngrySludge"
+  - "StormKing"
+  - "NetherLord"
+  # Add more boss names from MythicMobs
+
+# Integration settings
+integrations:
+  # Enable/disable integrations
+  vaults: true
+  fishing-plugin: true
+  dungeon-plugin: true
+  alchemy-plugin: true
+  mine-plugin: true
+  farming-plugin: true
+  beekeeper-plugin: true
+  crafting-plugin: true
+  mythicmobs: true
+
+  # Integration placeholders (for PlaceholderAPI)
+  placeholder-prefix: "pet_"
+
+# Messages
+messages:
+  prefix: "&8[&6Pets&8] &7"
+
+  no-permission: "&cYou don't have permission to do this!"
+  pet-spawned: "&aYour %pet% has been summoned!"
+  pet-despawned: "&cYour %pet% has been dismissed!"
+  pet-level-up: "&a&lLEVEL UP! &7Your %pet% is now level &e%level%&7!"
+  pet-max-level: "&6Your %pet% has reached maximum level!"
+  pet-needs-feeding: "&cYour pet needs feeding to level up! Required: &5%amount%x Andermant"
+  pet-fed: "&aYour pet has been fed and can now level up!"
+  pet-limit-reached: "&cYou have reached your maximum pet limit!"
+  pet-already-owned: "&cYou already own this type of pet!"
+  pet-deleted: "&cYour %pet% has been released!"
+
+  # GUI messages
+  gui-title-main: "&8Pet Management"
+  gui-title-pet: "&8Pet: %pet%"
+  gui-activate: "&aClick to activate"
+  gui-deactivate: "&cClick to deactivate"
+  gui-feed: "&5Click to feed"
+  gui-delete: "&c&lShift-Click to release"
+
+# Sound effects
+sounds:
+  pet-spawn: "ENTITY_EXPERIENCE_ORB_PICKUP"
+  pet-despawn: "ENTITY_ITEM_BREAK"
+  pet-levelup: "UI_TOAST_CHALLENGE_COMPLETE"
+  pet-feed: "ENTITY_GENERIC_EAT"
+  menu-open: "UI_BUTTON_CLICK"
+  menu-click: "UI_BUTTON_CLICK"
+
+# Particle effects
+particles:
+  pet-spawn: "VILLAGER_HAPPY"
+  pet-idle: "SPELL"
+  pet-levelup: "TOTEM"
+  pet-special: "END_ROD"
+
+# Pet drop system configuration
+pet-drops:
+  # Global settings
+  enabled: true
+  testing: false # Set to true for 50% drop chance and equal rarity chances
+
+  # Base drop chance (percentage)
+  base-drop-chance: 0.1
+
+  # Drop chance for each rarity when testing mode is enabled (50% total)
+  testing-drop-chance: 50.0
+  testing-equal-rarity: true
+
+  # Drop chances for each rarity (when NOT in testing mode)
+  drop-chances:
+    magic: 40.0      # Block of Lapis
+    extraordinary: 30.0  # Block of Amethyst
+    legendary: 20.0  # Block of Diamond
+    unique: 8.0      # Block of Emerald
+    mythic: 2.0      # Block of Redstone
+
+  # Block materials for each rarity
+  drop-blocks:
+    magic: "LAPIS_BLOCK"
+    extraordinary: "AMETHYST_BLOCK"
+    legendary: "DIAMOND_BLOCK"
+    unique: "EMERALD_BLOCK"
+    mythic: "REDSTONE_BLOCK"
+
+  # Block display names
+  block-names:
+    magic: "&9&lMagic Pet Block"
+    extraordinary: "&5&lExtraordinary Pet Block"
+    legendary: "&6&lLegendary Pet Block"
+    unique: "&e&lUnique Pet Block"
+    mythic: "&c&lMythic Pet Block"
+
+  # Block lore
+  block-lore:
+    - "&7Right click to obtain a random pet!"
+    - "&7Rarity: %rarity%"
+
+  # Messages
+  drop-messages:
+    pet-dropped: "&8[&6DROP&8] &7%player% &7has dropped a %rarity% &7pet!"
+    pet-obtained: "&aYou obtained a %rarity% %pet%!"
+
+# Debug mode
+debug: false
