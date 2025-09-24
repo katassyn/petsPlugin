@@ -6,6 +6,10 @@ description: 'Advanced pet system for MMO RPG Minecraft server with 31 different
 authors: [YourServer]
 website: 'https://yourserver.pl'
 
+# Required integrations
+depend:
+  - LibsDisguises
+
 # Soft dependencies (optional plugins that enhance functionality)
 softdepend:
   - Vault
