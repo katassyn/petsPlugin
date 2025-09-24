@@ -46,7 +46,7 @@ public enum PetType {
     ENDER_DRAGON("Ender Dragon", EntityType.ENDER_DRAGON, PetRarity.MYTHIC, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzRlY2MwNDBlMjdkZGYxNzhlYmFiNTYyNDQ2NmRmNmE2OGVmMGNmMGNjYjVkZjQ0MDVlNmVlMjM3NzVjMjZmMCJ9fX0="),
     WARDEN("Warden", EntityType.WARDEN, PetRarity.MYTHIC, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjUxODY2NmY0YjJlNDIxMGYyM2Y3ZGQ5NmJjOGM4MzM0MTE5MTYxYzRiNTBjNDcxMjgzOWI5ODg0YWU5MDczNyJ9fX0="),
     WITHER("Wither", EntityType.WITHER, PetRarity.MYTHIC, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RmNzRlMzIzZWQ0MTQzNjk2NWY1YzU3ZGRmMjgxNWQ1MzMyZmU5OTllNjhmYmI5ZDZjZjVjOGJkNDEzOWYifX19"),
-    GIANT("Giant", EntityType.GIANT, PetRarity.MYTHIC, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTZmYzg1NGJiODRjZjRiNzY5NzI5Nzk3M2UwMmI3OWJjMTA2OTg0NjBiNTFhNjM5YzYwZTVlNDE3NzM0ZTExIn19fQ==");
+    GIANT("Giant", EntityType.ZOMBIE, PetRarity.MYTHIC, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTZmYzg1NGJiODRjZjRiNzY5NzI5Nzk3M2UwMmI3OWJjMTA2OTg0NjBiNTFhNjM5YzYwZTVlNDE3NzM0ZTExIn19fQ==");
 
     private final String displayName;
     private final EntityType entityType;
@@ -76,4 +76,5 @@ public enum PetType {
         return skullTexture;
     }
 }
+
 

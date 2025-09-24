@@ -134,7 +134,7 @@ public class Pet {
     // Ilość Andermantu wymagana do karmienia
     public int getRequiredFeedAmount() {
         // Co 5 poziomów wymaga więcej
-        return (level / 5 + 1) * 3;
+        return (level / 5 + 1) * 100;
     }
 
     // Sprawdzenie czy pet wymaga karmienia

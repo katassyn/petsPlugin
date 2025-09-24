@@ -131,7 +131,7 @@ pets:
     effects:
       fishing-chest-bonus:
         base: 15.0
-        description: "+%value%% fishing chest weight"
+        description: "+%value%% fishing chest chance"
         # Lvl 1: 15%, Lvl 25: 37.5%, Lvl 50: 90%
     placeholders:
       - "pet_fishing_chest_bonus"
@@ -167,7 +167,7 @@ pets:
     effects:
       free-tp-chance:
         base: 7.5
-        description: "%value%% free dungeon teleport"
+        description: "%value%% free Q teleport"
         # Lvl 1: 7.5%, Lvl 25: 18.75%, Lvl 50: 45%
     placeholders:
       - "pet_dungeon_free_tp_chance"
@@ -191,7 +191,7 @@ pets:
     effects:
       mobsphere-chance:
         base: 12.0
-        description: "+%value%% mob sphere weight"
+        description: "+%value%% mob sphere chance"
         # Lvl 1: 12%, Lvl 25: 30%, Lvl 50: 72%
     placeholders:
       - "pet_mine_mobsphere_chance"
@@ -249,7 +249,7 @@ pets:
     effects:
       honey-quality:
         base: 25.0
-        description: "+%value%% honey quality weight"
+        description: "+%value%% honey quality chance"
     special-effect:
       level: 75
       double-honey-chance: 25.0
@@ -386,12 +386,12 @@ pets:
     effects:
       ocean-treasure:
         base: 10.0
-        description: "+%value%% ocean treasure weight"
+        description: "+%value%% ocean treasure chance"
         # Lvl 1: +10%, Lvl 75: +80%
     special-effect:
       level: 75
       rune-bonus: 5.0
-      description: "+5% rune weight bonus"
+      description: "+5% rune chance bonus"
     placeholders:
       - "pet_fishing_ocean_treasure_chance"
       - "pet_fishing_rune_bonus"
@@ -421,7 +421,7 @@ pets:
     effects:
       all-fishing:
         base: 10.0
-        description: "+%value%% weight for all fishing bonuses"
+        description: "+%value%% chance for all fishing unique rewards"
         # Lvl 1: +10%, Lvl 100: +160%
     special-effect:
       level: 100
@@ -438,7 +438,7 @@ pets:
     effects:
       all-mining:
         base: 18.0
-        description: "+%value%% weight for all mining bonuses"
+        description: "+%value%% chance for all mining rare spheres"
         # Lvl 1: +18%, Lvl 100: +288%
     special-effect:
       level: 100
@@ -523,12 +523,12 @@ pets:
     effects:
       mythic-items:
         base: 5.0
-        description: "+%value%% mythic items weight"
+        description: "+%value%% mythic items drop chance"
         # Lvl 1: +5%, Lvl 100: +80%
     special-effect:
       level: 100
       double-mythic: true
-      description: "Doubles mythic item chance"
+      description: "Doubles mythic item drop chance"
     placeholders:
       - "pet_mythicmobs_item_chance"
       - "pet_mythicmobs_double_chance"

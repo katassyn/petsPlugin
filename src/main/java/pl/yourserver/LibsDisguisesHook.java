@@ -279,10 +279,6 @@ public class LibsDisguisesHook {
                 case WITHER:
                     invokeOptional(flagWatcherSetYModifierMethod, watcher, -0.3F);
                     break;
-                case GIANT:
-                    invokeOptional(flagWatcherSetYModifierMethod, watcher, -0.55F);
-                    invokeOptional(flagWatcherSetNameYModifierMethod, watcher, -0.3F);
-                    break;
                 case WARDEN:
                     invokeOptional(flagWatcherSetYModifierMethod, watcher, -0.2F);
                     break;
@@ -350,3 +346,4 @@ public class LibsDisguisesHook {
         }
     }
 }
+

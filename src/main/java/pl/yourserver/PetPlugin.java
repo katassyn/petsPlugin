@@ -4,8 +4,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.ServicePriority;
 
 import java.util.logging.Level;
+import pl.yourserver.api.PetDungeonApi;
 // Fixed imports to match actual package structure
 // import pl.yourserver.petplugin.commands.PetCommand;
 // import pl.yourserver.petplugin.config.ConfigManager;
@@ -36,6 +38,7 @@ public class PetPlugin extends JavaPlugin {
     private PetDropManager petDropManager;
     private PetFollowTask petFollowTask;
     private HeadManager headManager;
+    private PetDungeonApi dungeonApi;
 
     @Override
     public void onEnable() {
@@ -71,6 +74,9 @@ public class PetPlugin extends JavaPlugin {
         integrationManager = new IntegrationManager(this);
         integrationManager.loadIntegrations();
 
+        dungeonApi = new PetDungeonIntegration(this);
+        Bukkit.getServicesManager().register(PetDungeonApi.class, dungeonApi, this, ServicePriority.Normal);
+
         // Rejestracja PlaceholderAPI expansion
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new PetPlaceholderExpansion(this).register();
@@ -97,6 +103,10 @@ public class PetPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (dungeonApi != null) {
+            Bukkit.getServicesManager().unregister(dungeonApi);
+            dungeonApi = null;
+        }
         // Zapisanie wszystkich petów
         if (petDataManager != null) {
             Bukkit.getOnlinePlayers().forEach(player -> {
@@ -207,6 +217,10 @@ public class PetPlugin extends JavaPlugin {
         return petFollowTask;
     }
 
+    public PetDungeonApi getDungeonApi() {
+        return dungeonApi;
+    }
+
     public HeadManager getHeadManager() {
         return headManager;
     }
@@ -252,3 +266,13 @@ public class PetPlugin extends JavaPlugin {
         player.sendMessage(TextUtil.colorize("&aDebug completed! Check console for results."));
     }
 }
+
+
+
+
+
+
+
+
+
+

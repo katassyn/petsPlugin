@@ -5,6 +5,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 // Fixed imports to match actual package structure
@@ -36,7 +37,7 @@ public class PetEffectManager {
         IntegrationManager integrations = plugin.getIntegrationManager();
 
         switch (pet.getType()) {
-            // MAGIC Pets - Nowe wartości
+            // MAGIC Pets - Nowe wartoÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąĹşci
             case COW:
                 // +HP: Base 10, +2 per level, special calculation
                 double bonusHp = pet.calculateSpecialEffect(10.0, 2.0);
@@ -45,7 +46,7 @@ public class PetEffectManager {
 
             case PIG:
                 // Szansa na $ przy zabijaniu: Base 5%, $100-200
-                // Obsługiwane w EntityDeathListener z nowymi wartościami
+                // ObsÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡ugiwane w EntityDeathListener z nowymi wartoÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąĹşciami
                 double moneyChance = pet.calculateBaseEffect(5.0);
                 integrations.setPlaceholder("pig_money_chance", moneyChance);
                 integrations.setPlaceholder("pig_money_min", 100);
@@ -61,7 +62,7 @@ public class PetEffectManager {
                 }
                 break;
 
-            // EXTRAORDINARY Pets - Nowe wartości
+            // EXTRAORDINARY Pets - Nowe wartoÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąĹşci
             case CHICKEN:
                 // +Luck attribute: +0.25 per level
                 double luckBonus = pet.calculateEffectValue(0.0, 0.25);
@@ -69,13 +70,13 @@ public class PetEffectManager {
                 break;
 
             case DONKEY:
-                // Dodatkowy schowek: 9 slotów → 27 na 25lvl
+                // Dodatkowy schowek: 9 slotÄ‚â€žĂ˘â‚¬ĹˇĂ„Ä…Ă˘â‚¬Ĺˇw Ă„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬Ă‚Â Ä‚ËĂ˘â€šÂ¬Ă˘â€žË 27 na 25lvl
                 int extraSlots = pet.getLevel() >= 25 ? 27 : 9;
                 integrations.setPlaceholder("donkey_extra_storage", extraSlots);
                 break;
 
             case SNOW_GOLEM:
-                // Spowalnia wrogów: Base 5 bloków radius
+                // Spowalnia wrogÄ‚â€žĂ˘â‚¬ĹˇĂ„Ä…Ă˘â‚¬Ĺˇw: Base 5 blokÄ‚â€žĂ˘â‚¬ĹˇĂ„Ä…Ă˘â‚¬Ĺˇw radius
                 double radius = pet.calculateBaseEffect(5.0);
                 for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
                     if (entity instanceof LivingEntity && !(entity instanceof Player)) {
@@ -94,21 +95,21 @@ public class PetEffectManager {
                 }
                 break;
 
-            // LEGENDARY Pets - Nowe wartości
+            // LEGENDARY Pets - Nowe wartoÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąĹşci
             case SQUID:
-                // Zwiększa wagę skrzyń rybaka: Base 15%
+                // ZwiĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Âksza wagĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Â skrzyÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąÄľ rybaka: Base 15%
                 double fishingChestBonus = pet.calculateBaseEffect(15.0);
                 integrations.setPlaceholder("fishing_chest_bonus", fishingChestBonus);
                 break;
 
             case TURTLE:
-                // Zmniejsza dmg od mobów: Base 1%
+                // Zmniejsza dmg od mobÄ‚â€žĂ˘â‚¬ĹˇĂ„Ä…Ă˘â‚¬Ĺˇw: Base 1%
                 double mobDamageReduction = pet.calculateBaseEffect(1.0);
                 integrations.setPlaceholder("turtle_damage_reduction", mobDamageReduction);
                 break;
 
             case LLAMA:
-                // Zwiększa dmg na moby: Base 2%
+                // ZwiĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Âksza dmg na moby: Base 2%
                 double mobDamageBonus = pet.calculateBaseEffect(2.0);
                 integrations.setPlaceholder("llama_mob_damage", mobDamageBonus);
                 break;
@@ -120,30 +121,30 @@ public class PetEffectManager {
                 break;
 
             case WITCH:
-                // Wydłuża działanie mikstur: Base 15%
+                // WydÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡uÄ‚â€žĂ„â€¦Ä‚â€žĂ‹ĹĄa dziaÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡anie mikstur: Base 15%
                 double potionDurationBonus = pet.calculateBaseEffect(15.0);
                 integrations.setPlaceholder("potion_duration_bonus", potionDurationBonus);
                 break;
 
             case HUSK:
-                // Większa waga mob sphere: Base 12%
+                // WiĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Âksza waga mob sphere: Base 12%
                 double mobsphereChance = pet.calculateBaseEffect(12.0);
                 integrations.setPlaceholder("mine_mobsphere_chance", mobsphereChance);
                 break;
 
             case MOOSHROOM:
-                // Zwiększa szybkość plonu: Base 20%
+                // ZwiĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Âksza szybkoÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąĹşĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬Ă‹â€ˇ plonu: Base 20%
                 double farmSpeed = pet.calculateBaseEffect(20.0);
                 integrations.setPlaceholder("farm_growth_speed", farmSpeed);
                 break;
 
             case FROG:
-                // Zwiększa prędkość produkcji miodu: Base 15%
+                // ZwiĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Âksza prĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹ÂdkoÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąĹşĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬Ă‹â€ˇ produkcji miodu: Base 15%
                 double honeySpeed = pet.calculateBaseEffect(15.0);
                 integrations.setPlaceholder("honey_production_speed", honeySpeed);
                 break;
 
-            // UNIQUE Pets - Nowe wartości + specjalne efekty
+            // UNIQUE Pets - Nowe wartoÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąĹşci + specjalne efekty
             case WOLF:
                 // PvP damage i damage reduction: Base 5%
                 double pvpDamage = pet.calculateBaseEffect(5.0);
@@ -158,7 +159,7 @@ public class PetEffectManager {
                 break;
 
             case BEE:
-                // Zwiększa wagę quality miodu: Base 25%
+                // ZwiĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Âksza wagĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Â quality miodu: Base 25%
                 double honeyQuality = pet.calculateBaseEffect(25.0);
                 integrations.setPlaceholder("honey_quality_bonus", honeyQuality);
 
@@ -180,7 +181,7 @@ public class PetEffectManager {
                 break;
 
             case PANDA:
-                // Zwiększa storage farming: Base 30%
+                // ZwiĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Âksza storage farming: Base 30%
                 double farmStorage = pet.calculateBaseEffect(30.0);
                 integrations.setPlaceholder("farm_storage_bonus", farmStorage);
 
@@ -248,7 +249,7 @@ public class PetEffectManager {
                 break;
 
             case PHANTOM:
-                // Zwiększa wagę ocean treasure: Base 10%
+                // ZwiĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Âksza wagĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Â ocean treasure: Base 10%
                 double oceanTreasure = pet.calculateBaseEffect(10.0);
                 integrations.setPlaceholder("fishing_ocean_treasure_chance", oceanTreasure);
 
@@ -259,7 +260,7 @@ public class PetEffectManager {
                 break;
 
             case GLOW_SQUID:
-                // Zwiększa szansę na rzadsze rudy: Base 18%
+                // ZwiĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Âksza szansĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Â na rzadsze rudy: Base 18%
                 double rareOreChance = pet.calculateBaseEffect(18.0);
                 integrations.setPlaceholder("mine_rare_ore_chance", rareOreChance);
 
@@ -269,7 +270,7 @@ public class PetEffectManager {
                 }
                 break;
 
-            // MYTHIC Pets - Nowe wartości + specjalne efekty
+            // MYTHIC Pets - Nowe wartoÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąĹşci + specjalne efekty
             case GUARDIAN:
                 // Wszystkie fishing bonusy: Base 10%
                 double guardianFishingBonus = pet.calculateBaseEffect(10.0);
@@ -318,7 +319,7 @@ public class PetEffectManager {
                     if (otherPet != pet && otherPet.getType() != PetType.ENDER_DRAGON) {
                         applyPetEffect(player, otherPet); // Duplikuj efekt
 
-                        // Specjalny efekt na 100lvl: podwójna duplikacja
+                        // Specjalny efekt na 100lvl: podwÄ‚â€žĂ˘â‚¬ĹˇĂ„Ä…Ă˘â‚¬Ĺˇjna duplikacja
                         if (pet.hasSpecialEffect()) {
                             applyPetEffect(player, otherPet); // Druga kopia
                         }
@@ -375,12 +376,12 @@ public class PetEffectManager {
                 break;
 
             case BEE:
-                // Auto-collect miód w promieniu
+                // Auto-collect miÄ‚â€žĂ˘â‚¬ĹˇĂ„Ä…Ă˘â‚¬Ĺˇd w promieniu
                 integrations.setPlaceholder("bee_auto_collect", 1.0);
                 break;
 
             case WANDERING_TRADER:
-                // Szansa na zwrot materiałów przy craftingu
+                // Szansa na zwrot materiaÄ‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡Ä‚â€žĂ˘â‚¬ĹˇĂ„Ä…Ă˘â‚¬Ĺˇw przy craftingu
                 integrations.setPlaceholder("crafting_refund_chance", 0.10);
                 break;
 
@@ -406,7 +407,226 @@ public class PetEffectManager {
         }
     }
 
-    // Sprawdź czy efekt powinien się aktywować
+
+    private String formatEffectDescription(Pet pet, double primaryValue, String fallback, Map<String, Object> extras) {
+        String basePath = "pets." + pet.getType().name() + ".effects";
+        ConfigurationSection root = plugin.getConfigManager().getPetsConfig().getConfigurationSection(basePath);
+        ConfigurationSection effectSection = null;
+        String template = null;
+        if (root != null) {
+            for (String key : root.getKeys(false)) {
+                effectSection = root.getConfigurationSection(key);
+                if (effectSection != null) {
+                    template = effectSection.getString("description");
+                    if (template != null && !template.isEmpty()) {
+                        break;
+                    }
+                }
+            }
+        }
+        if (template == null || template.isEmpty()) {
+            return TextUtil.colorize(fallback);
+        }
+        Map<String, String> replacements = buildPlaceholders(effectSection, primaryValue, extras);
+        return applyPlaceholders(template, replacements, fallback);
+    }
+
+    private String formatSpecialEffectDescription(Pet pet) {
+        String path = "pets." + pet.getType().name() + ".special-effect";
+        ConfigurationSection section = plugin.getConfigManager().getPetsConfig().getConfigurationSection(path);
+        if (section == null) {
+            return null;
+        }
+        String template = section.getString("description");
+        if (template == null || template.isEmpty()) {
+            return null;
+        }
+        Map<String, String> replacements = buildPlaceholders(section, null, null);
+        return applyPlaceholders(template, replacements, null);
+    }
+
+    private Map<String, String> buildPlaceholders(ConfigurationSection section, Double mainValue, Map<String, Object> extras) {
+        Map<String, String> replacements = new HashMap<>();
+        if (mainValue != null) {
+            replacements.put("%value%", formatNumber(mainValue));
+        }
+        if (section != null) {
+            for (String key : section.getKeys(false)) {
+                if ("description".equalsIgnoreCase(key)) {
+                    continue;
+                }
+                Object raw = section.get(key);
+                if (raw instanceof ConfigurationSection) {
+                    continue;
+                }
+                String placeholder = "%" + key.replace('-', '_') + "%";
+                replacements.put(placeholder, formatObject(raw));
+            }
+        }
+        if (extras != null) {
+            for (Map.Entry<String, Object> entry : extras.entrySet()) {
+                String placeholder = entry.getKey();
+                if (!placeholder.startsWith("%")) {
+                    placeholder = "%" + placeholder;
+                }
+                if (!placeholder.endsWith("%")) {
+                    placeholder = placeholder + "%";
+                }
+                replacements.put(placeholder, formatObject(entry.getValue()));
+            }
+        }
+        return replacements;
+    }
+
+    private String formatObject(Object raw) {
+        if (raw instanceof Number) {
+            return formatNumber((Number) raw);
+        }
+        if (raw instanceof Boolean) {
+            return (Boolean) raw ? "true" : "false";
+        }
+        return String.valueOf(raw);
+    }
+
+    private String formatNumber(Number number) {
+        return formatNumber(number.doubleValue());
+    }
+
+    private String formatNumber(double value) {
+        if (Math.abs(value - Math.round(value)) < 1e-6) {
+            return String.valueOf(Math.round(value));
+        }
+        return df.format(value);
+    }
+
+    private String applyPlaceholders(String template, Map<String, String> replacements, String fallbackColorSource) {
+        String result = template;
+        for (Map.Entry<String, String> entry : replacements.entrySet()) {
+            result = result.replace(entry.getKey(), entry.getValue());
+        }
+        if (!hasColorCodes(result)) {
+            String prefix = extractLeadingColorCodes(fallbackColorSource);
+            if (!prefix.isEmpty()) {
+                result = prefix + result;
+            }
+        }
+        return TextUtil.colorize(result);
+    }
+
+    private boolean hasColorCodes(String text) {
+        if (text == null) {
+            return false;
+        }
+        return text.indexOf('&') >= 0 || text.indexOf('\u00A7') >= 0;
+    }
+
+    private String extractLeadingColorCodes(String source) {
+        if (source == null) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+        int length = source.length();
+        for (int i = 0; i < length - 1; i++) {
+            char current = source.charAt(i);
+            char next = source.charAt(i + 1);
+            if ((current == '&' || current == '\u00A7') && isColorCodeChar(next)) {
+                builder.append('&').append(Character.toLowerCase(next));
+                i++;
+                continue;
+            }
+            if (Character.isWhitespace(current)) {
+                continue;
+            }
+            break;
+        }
+        return builder.toString();
+    }
+
+    private boolean isColorCodeChar(char c) {
+        c = Character.toLowerCase(c);
+        return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'k' && c <= 'o') || c == 'r';
+    }
+
+    private String ensureColored(String text, String fallbackRaw) {
+        if (text == null) {
+            return null;
+        }
+        String trimmed = text.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        String candidate = trimmed;
+        if (!hasColorCodes(candidate)) {
+            String prefix = extractLeadingColorCodes(fallbackRaw);
+            if (!prefix.isEmpty()) {
+                candidate = prefix + candidate;
+            }
+        }
+        return TextUtil.colorize(candidate);
+    }
+
+    private String getDefaultSpecialEffectRaw(PetType type) {
+        if (type == null) {
+            return "&7No special effect";
+        }
+        switch (type) {
+            case WOLF:
+                return "&cLifesteal from PvP damage";
+            case BEE:
+                return "&6Auto-collects honey nearby";
+            case WANDERING_TRADER:
+                return "&a10% material refund chance";
+            case PANDA:
+                return "&2Chance for double harvest";
+            case ZOMBIE:
+            case SKELETON:
+            case SPIDER:
+            case CREEPER:
+            case SLIME:
+                return "&4Boss execute at 10% HP";
+            case PHANTOM:
+                return "&bWater walking ability";
+            case GLOW_SQUID:
+                return "&eOre X-ray vision";
+            case GUARDIAN:
+                return "&bInfinite water breathing";
+            case SNIFFER:
+                return "&6Highlights rare ores";
+            case WITHER_SKELETON:
+                return "&5Guaranteed rare drops";
+            case ENDER_DRAGON:
+                return "&dDoubles the duplication effect (2x copy of 2nd pet)";
+            case WARDEN:
+                return "&8Intimidation aura";
+            case WITHER:
+                return "&4Applies wither to bosses";
+            case GIANT:
+                return "&cDoubles mythic item chance";
+            default:
+                return "&7No special effect";
+        }
+    }
+
+    public String getSpecialEffectDescription(Pet pet) {
+        String defaultRaw = getDefaultSpecialEffectRaw(pet.getType());
+        String description = ensureColored(formatSpecialEffectDescription(pet), defaultRaw);
+        if (description != null && !description.isEmpty()) {
+            return description;
+        }
+        return TextUtil.colorize(defaultRaw != null ? defaultRaw : "&7No special effect");
+    }
+   
+    // WyczyÄąâ€şĂ„â€ˇ efekty gracza
+    public void clearEffects(Player player) {
+        cooldowns.remove(player.getUniqueId());
+        effectStacks.remove(player.getUniqueId());
+
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+
+        player.removePotionEffect(PotionEffectType.WATER_BREATHING);
+        player.removePotionEffect(PotionEffectType.LUCK);
+    }
+ // SprawdÄ‚â€žĂ„â€¦Ă„Ä…ÄąĹź czy efekt powinien siĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â‚¬ĹľĂ‹Â aktywowaĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬Ă‹â€ˇ
     private boolean shouldTriggerEffect(Player player, int cooldownSeconds) {
         UUID uuid = player.getUniqueId();
         long currentTime = System.currentTimeMillis();
@@ -421,193 +641,209 @@ public class PetEffectManager {
 
     // Pobierz opis efektu peta
     public String getPetEffectDescription(Pet pet) {
-        double multiplier = pet.getEffectMultiplier();
-
+        String description;
         switch (pet.getType()) {
-            // MAGIC
             case COW:
                 double cowHp = pet.calculateSpecialEffect(12.0, 2.0);
-                return "&c+" + df.format(cowHp) + " Maximum Health";
+                description = formatEffectDescription(pet, cowHp,
+                        "&c+" + df.format(cowHp) + " Maximum Health", null);
+                break;
             case PIG:
                 double pigChance = pet.calculateBaseEffect(5.0);
-                return "&6" + df.format(pigChance) + "% chance for $100-200 on mob kill";
+                double minMoney = plugin.getConfigManager().getPetsConfig().getDouble("pets.PIG.effects.money-chance.min-money", 100);
+                double maxMoney = plugin.getConfigManager().getPetsConfig().getDouble("pets.PIG.effects.money-chance.max-money", 200);
+                Map<String, Object> pigExtras = new HashMap<>();
+                pigExtras.put("%min_money%", minMoney);
+                pigExtras.put("%max_money%", maxMoney);
+                description = formatEffectDescription(pet, pigChance,
+                        "&6" + df.format(pigChance) + "% chance for $" + formatNumber(minMoney) + "-" + formatNumber(maxMoney) + " on mob kill",
+                        pigExtras);
+                break;
             case SHEEP:
                 double sheepHeal = pet.calculateSpecialEffect(12.0, 2.0);
-                return "&d+" + df.format(sheepHeal) + " HP regeneration every 20 seconds";
-
-            // EXTRAORDINARY
+                description = formatEffectDescription(pet, sheepHeal,
+                        "&d+" + df.format(sheepHeal) + " HP every 20s", null);
+                break;
             case CHICKEN:
                 double chickenLuck = pet.calculateEffectValue(0.0, 0.25);
-                return "&a+" + df.format(chickenLuck) + " Luck attribute bonus";
+                description = formatEffectDescription(pet, chickenLuck,
+                        "&a+" + df.format(chickenLuck) + " Luck attribute", null);
+                break;
             case DONKEY:
-                int donkeySlots = pet.getLevel() >= 25 ? 27 : 9;
-                return "&e+" + donkeySlots + " extra inventory slots";
+                double donkeySlots = pet.getLevel() >= 25 ? 27 : 9;
+                description = formatEffectDescription(pet, donkeySlots,
+                        "&eExtra inventory (" + formatNumber(donkeySlots) + " slots)", null);
+                break;
             case SNOW_GOLEM:
                 double snowRadius = pet.calculateBaseEffect(5.0);
-                return "&bSlows enemies in " + df.format(snowRadius) + " block radius";
+                description = formatEffectDescription(pet, snowRadius,
+                        "&bSlows enemies in " + df.format(snowRadius) + " block radius", null);
+                break;
             case IRON_GOLEM:
                 double ironDamage = pet.calculateBaseEffect(2.0);
-                return "&7+" + df.format(ironDamage) + "x damage power strike every 30s";
-
-            // LEGENDARY
+                description = formatEffectDescription(pet, ironDamage,
+                        "&7" + df.format(ironDamage) + "x damage every 30s", null);
+                break;
             case SQUID:
                 double squidChest = pet.calculateBaseEffect(15.0);
-                return "&3+" + df.format(squidChest) + "% fishing chest chance";
+                description = formatEffectDescription(pet, squidChest,
+                        "&3+" + df.format(squidChest) + "% fishing chest chance", null);
+                break;
             case TURTLE:
                 double turtleReduction = pet.calculateBaseEffect(1.0);
-                return "&2-" + df.format(turtleReduction) + "% damage taken from mobs";
+                description = formatEffectDescription(pet, turtleReduction,
+                        "&2-" + df.format(turtleReduction) + "% damage taken from mobs", null);
+                break;
             case LLAMA:
                 double llamaDamage = pet.calculateBaseEffect(2.0);
-                return "&c+" + df.format(llamaDamage) + "% damage dealt to mobs";
+                description = formatEffectDescription(pet, llamaDamage,
+                        "&c+" + df.format(llamaDamage) + "% damage dealt to mobs", null);
+                break;
             case ENDERMAN:
                 double endermanTp = pet.calculateBaseEffect(7.5);
-                return "&5" + df.format(endermanTp) + "% chance for free dungeon teleport";
+                description = formatEffectDescription(pet, endermanTp,
+                        "&5" + df.format(endermanTp) + "% free Q teleport", null);
+                break;
             case WITCH:
                 double witchDuration = pet.calculateBaseEffect(15.0);
-                return "&d+" + df.format(witchDuration) + "% potion effect duration";
+                description = formatEffectDescription(pet, witchDuration,
+                        "&d+" + df.format(witchDuration) + "% potion duration", null);
+                break;
             case HUSK:
-                double huskSphere = pet.calculateBaseEffect(12.0);
-                return "&6+" + df.format(huskSphere) + "% mob sphere drop chance";
+                double huskChance = pet.calculateBaseEffect(12.0);
+                description = formatEffectDescription(pet, huskChance,
+                        "&6+" + df.format(huskChance) + "% mob sphere drop chance", null);
+                break;
             case MOOSHROOM:
                 double mooshroomSpeed = pet.calculateBaseEffect(20.0);
-                return "&a+" + df.format(mooshroomSpeed) + "% farming growth speed";
+                description = formatEffectDescription(pet, mooshroomSpeed,
+                        "&a+" + df.format(mooshroomSpeed) + "% farming growth speed", null);
+                break;
             case FROG:
                 double frogHoney = pet.calculateBaseEffect(15.0);
-                return "&e+" + df.format(frogHoney) + "% honey production speed";
-
-            // UNIQUE
+                description = formatEffectDescription(pet, frogHoney,
+                        "&e+" + df.format(frogHoney) + "% honey production speed", null);
+                break;
             case WOLF:
                 double wolfPvp = pet.calculateBaseEffect(5.0);
-                String wolfExtra = pet.hasSpecialEffect() ? " + 15% lifesteal" : "";
-                return "&c+" + df.format(wolfPvp) + "% PvP damage & damage reduction" + wolfExtra;
+                description = formatEffectDescription(pet, wolfPvp,
+                        "&c+" + df.format(wolfPvp) + "% PvP damage & damage reduction", null);
+                break;
             case BEE:
                 double beeQuality = pet.calculateBaseEffect(25.0);
-                String beeExtra = pet.hasSpecialEffect() ? " + 25% double honey" : "";
-                return "&6+" + df.format(beeQuality) + "% honey quality chance" + beeExtra;
+                description = formatEffectDescription(pet, beeQuality,
+                        "&6+" + df.format(beeQuality) + "% honey quality chance", null);
+                break;
             case WANDERING_TRADER:
                 double traderCost = pet.calculateBaseEffect(1.43);
-                String traderExtra = pet.hasSpecialEffect() ? " + 5% full refund" : "";
-                return "&a-" + df.format(traderCost) + "% crafting cost" + traderExtra;
+                description = formatEffectDescription(pet, traderCost,
+                        "&a-" + df.format(traderCost) + "% crafting cost", null);
+                break;
             case PANDA:
-                double pandaYield = pet.calculateBaseEffect(30.0);
-                String pandaExtra = pet.hasSpecialEffect() ? " + 25% double harvest" : "";
-                return "&2+" + df.format(pandaYield) + "% farm storage bonus" + pandaExtra;
+                double pandaStorage = pet.calculateBaseEffect(30.0);
+                description = formatEffectDescription(pet, pandaStorage,
+                        "&2+" + df.format(pandaStorage) + "% farm storage bonus", null);
+                break;
             case ZOMBIE:
-                double zombieDmg = pet.calculateBaseEffect(3.0);
-                String zombieExtra = pet.hasSpecialEffect() ? " + Execute at 10% HP" : "";
-                return "&4+" + df.format(zombieDmg) + "% damage in Dungeon Q1/Q3" + zombieExtra;
+                double zombieDamage = pet.calculateBaseEffect(3.0);
+                description = formatEffectDescription(pet, zombieDamage,
+                        "&4+" + df.format(zombieDamage) + "% damage in Dungeon Q1/Q3", null);
+                break;
             case SKELETON:
-                double skeletonDmg = pet.calculateBaseEffect(3.0);
-                String skeletonExtra = pet.hasSpecialEffect() ? " + Execute at 10% HP" : "";
-                return "&7+" + df.format(skeletonDmg) + "% damage in Dungeon Q6/Q7" + skeletonExtra;
+                double skeletonDamage = pet.calculateBaseEffect(3.0);
+                description = formatEffectDescription(pet, skeletonDamage,
+                        "&7+" + df.format(skeletonDamage) + "% damage in Dungeon Q6/Q7", null);
+                break;
             case SPIDER:
-                double spiderDmg = pet.calculateBaseEffect(3.0);
-                String spiderExtra = pet.hasSpecialEffect() ? " + Execute at 10% HP" : "";
-                return "&8+" + df.format(spiderDmg) + "% damage in Dungeon Q2/Q4" + spiderExtra;
+                double spiderDamage = pet.calculateBaseEffect(3.0);
+                description = formatEffectDescription(pet, spiderDamage,
+                        "&8+" + df.format(spiderDamage) + "% damage in Dungeon Q2/Q4", null);
+                break;
             case CREEPER:
-                double creeperDmg = pet.calculateBaseEffect(3.0);
-                String creeperExtra = pet.hasSpecialEffect() ? " + Execute at 10% HP" : "";
-                return "&a+" + df.format(creeperDmg) + "% damage in Dungeon Q5/Q8" + creeperExtra;
+                double creeperDamage = pet.calculateBaseEffect(3.0);
+                description = formatEffectDescription(pet, creeperDamage,
+                        "&a+" + df.format(creeperDamage) + "% damage in Dungeon Q5/Q8", null);
+                break;
             case SLIME:
-                double slimeDmg = pet.calculateBaseEffect(3.0);
-                String slimeExtra = pet.hasSpecialEffect() ? " + Execute at 10% HP" : "";
-                return "&2+" + df.format(slimeDmg) + "% damage in Dungeon Q9/Q10" + slimeExtra;
+                double slimeDamage = pet.calculateBaseEffect(3.0);
+                description = formatEffectDescription(pet, slimeDamage,
+                        "&2+" + df.format(slimeDamage) + "% damage in Dungeon Q9/Q10", null);
+                break;
             case PHANTOM:
                 double phantomTreasure = pet.calculateBaseEffect(10.0);
-                String phantomExtra = pet.hasSpecialEffect() ? " + 5% rune bonus" : "";
-                return "&b+" + df.format(phantomTreasure) + "% ocean treasure chance" + phantomExtra;
+                description = formatEffectDescription(pet, phantomTreasure,
+                        "&b+" + df.format(phantomTreasure) + "% ocean treasure chance", null);
+                break;
             case GLOW_SQUID:
-                double glowOre = pet.calculateBaseEffect(18.0);
-                String glowExtra = pet.hasSpecialEffect() ? " + 25% ore duplication" : "";
-                return "&e+" + df.format(glowOre) + "% rare ore chance" + glowExtra;
-
-            // MYTHIC
+                double glowChance = pet.calculateBaseEffect(18.0);
+                description = formatEffectDescription(pet, glowChance,
+                        "&e+" + df.format(glowChance) + "% rare ore chance", null);
+                break;
             case GUARDIAN:
                 double guardianBonus = pet.calculateBaseEffect(10.0);
-                String guardianExtra = pet.hasSpecialEffect() ? " + 100x fish sell price" : "";
-                return "&b+" + df.format(guardianBonus) + "% all fishing bonuses" + guardianExtra;
+                description = formatEffectDescription(pet, guardianBonus,
+                        "&b+" + df.format(guardianBonus) + "% all fishing bonuses", null);
+                break;
             case SNIFFER:
                 double snifferBonus = pet.calculateBaseEffect(18.0);
-                String snifferExtra = pet.hasSpecialEffect() ? " + 2x ore sell price" : "";
-                return "&6+" + df.format(snifferBonus) + "% all mining bonuses" + snifferExtra;
+                description = formatEffectDescription(pet, snifferBonus,
+                        "&6+" + df.format(snifferBonus) + "% all mining bonuses", null);
+                break;
             case WITHER_SKELETON:
                 double witherMaterials = pet.calculateBaseEffect(6.25);
-                String witherExtra = pet.hasSpecialEffect() ? " + 3x fruit sell price" : "";
-                return "&5+" + df.format(witherMaterials) + "% special material chance" + witherExtra;
+                description = formatEffectDescription(pet, witherMaterials,
+                        "&5+" + df.format(witherMaterials) + "% special material chance", null);
+                break;
             case ENDER_DRAGON:
-                String dragonExtra = pet.hasSpecialEffect() ? " + doubles duplication effect" : "";
-                return "&d+1 pet slot & duplicates other pet effects" + dragonExtra;
+                double extraSlot = 1.0;
+                description = formatEffectDescription(pet, extraSlot,
+                        "&d+1 pet slot & duplicates other pet effects", null);
+                break;
             case WARDEN:
-                int wardenSlots = pet.hasSpecialEffect() ? 3 : 2;
-                return "&8+" + wardenSlots + " additional pet slots";
+                double wardenSlots = pet.hasSpecialEffect() ? 3 : 2;
+                description = formatEffectDescription(pet, wardenSlots,
+                        "&8+" + df.format(wardenSlots) + " additional pet slots", null);
+                break;
             case WITHER:
-                double witherBoss = pet.calculateBaseEffect(5.0);
-                String witherBossExtra = "";
-                if (pet.hasSpecialEffect()) {
-                    witherBossExtra = " + "
-                            + df.format(plugin.getConfigManager().getWitherSpecialDamage())
-                            + " wither damage/s for "
-                            + plugin.getConfigManager().getWitherSpecialDuration()
-                            + "s";
-                }
-                return "&4+" + df.format(witherBoss) + "% boss damage" + witherBossExtra;
+                double witherDamage = pet.calculateBaseEffect(5.0);
+                description = formatEffectDescription(pet, witherDamage,
+                        "&4+" + df.format(witherDamage) + "% boss damage", null);
+                break;
             case GIANT:
-                double giantMythic = pet.calculateBaseEffect(5.0);
-                String giantExtra = pet.hasSpecialEffect() ? " + double mythic chance" : "";
-                return "&c+" + df.format(giantMythic) + "% mythic item drop chance" + giantExtra;
-
-            default: return "&7Unknown effect";
+                double giantChance = pet.calculateBaseEffect(5.0);
+                description = formatEffectDescription(pet, giantChance,
+                        "&c+" + df.format(giantChance) + "% mythic item drop chance", null);
+                break;
+            default:
+                description = TextUtil.colorize("&7Unknown effect");
         }
+        return appendSpecialDescription(pet, description);
     }
 
-    // Pobierz opis specjalnego efektu
-    public String getSpecialEffectDescription(Pet pet) {
-        switch (pet.getType()) {
-            // Unique special effects (75 lvl)
-            case WOLF: return "&cLifesteal from PvP damage";
-            case BEE: return "&6Auto-collects honey nearby";
-            case WANDERING_TRADER: return "&a10% material refund chance";
-            case PANDA: return "&2Chance for double harvest";
-            case ZOMBIE:
-            case SKELETON:
-            case SPIDER:
-            case CREEPER:
-            case SLIME: return "&4Boss execute at 10% HP";
-            case PHANTOM: return "&bWater walking ability";
-            case GLOW_SQUID: return "&eOre X-ray vision";
-
-            // Mythic special effects (100 lvl)
-            case GUARDIAN: return "&bInfinite water breathing";
-            case SNIFFER: return "&6Highlights rare ores";
-            case WITHER_SKELETON: return "&5Guaranteed rare drops";
-            case ENDER_DRAGON: return "&dDoubles the duplication effect (2x copy of 2nd pet)";
-            case WARDEN: return "&8Intimidation aura";
-            case WITHER: return "&4Applies wither to bosses";
-            case GIANT: return "&cDoubles mythic item chance";
-
-            default: return "&7No special effect";
+    private String appendSpecialDescription(Pet pet, String baseDescription) {
+        if (!pet.hasSpecialEffect()) {
+            return baseDescription;
         }
+        String defaultRaw = getDefaultSpecialEffectRaw(pet.getType());
+        String special = ensureColored(formatSpecialEffectDescription(pet), defaultRaw);
+        if (special == null || special.isEmpty()) {
+            if (defaultRaw == null) {
+                return baseDescription;
+            }
+            special = TextUtil.colorize(defaultRaw);
+        }
+        if (baseDescription == null || baseDescription.isEmpty()) {
+            return special;
+        }
+        return baseDescription + " " + special;
     }
 
-    // Wyczyść efekty gracza
-    public void clearEffects(Player player) {
-        cooldowns.remove(player.getUniqueId());
-        effectStacks.remove(player.getUniqueId());
-
-        // Reset atrybutów
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
-
-        // Usuń efekty (flight removed - should not be managed by pets)
-        player.removePotionEffect(PotionEffectType.WATER_BREATHING);
-        player.removePotionEffect(PotionEffectType.LUCK);
-    }
-
-    // Sprawdź czy gracz ma stack efektu (np. Iron Golem)
+    // SprawdÄ‚â€žĂ„â€¦Ă„Ä…ÄąĹź czy gracz ma stack efektu (np. Iron Golem)
     public boolean hasEffectStack(Player player) {
         return effectStacks.getOrDefault(player.getUniqueId(), 0) > 0;
     }
 
-    // Użyj stack efektu
+    // UÄ‚â€žĂ„â€¦Ä‚â€žĂ‹ĹĄyj stack efektu
     public void useEffectStack(Player player) {
         int stacks = effectStacks.getOrDefault(player.getUniqueId(), 0);
         if (stacks > 0) {
