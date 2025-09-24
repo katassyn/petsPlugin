@@ -57,6 +57,8 @@ public class ConfigManager {
     private double snifferMiningBonus;
     private double witherSkeletonSpecialChance;
     private double witherBossDamage;
+    private double witherSpecialDamage;
+    private int witherSpecialDuration;
     private double giantMythicChance;
     private double ironGolemDamageMultiplier;
 
@@ -106,10 +108,11 @@ public class ConfigManager {
             headDatabaseIds.put(petType, id != null ? id : "");
         }
 
-        // All effect values now come from pets.yml, not config.yml
-
         // Boss configuration
         loadBossConfiguration();
+
+        // Effect configuration
+        loadEffectValues();
     }
 
     private void loadBossConfiguration() {
@@ -286,6 +289,14 @@ public class ConfigManager {
         return witherBossDamage;
     }
 
+    public double getWitherSpecialDamage() {
+        return witherSpecialDamage;
+    }
+
+    public int getWitherSpecialDuration() {
+        return witherSpecialDuration;
+    }
+
     public double getGiantMythicChance() {
         return giantMythicChance;
     }
@@ -303,6 +314,58 @@ public class ConfigManager {
             return false;
         }
         return mythicBossXp.containsKey(internalName.toLowerCase(Locale.ROOT));
+    }
+
+    private void loadEffectValues() {
+        cowBonusHealth = getEffectBase("COW", "health-bonus", 10.0);
+        pigMoneyChance = getEffectBase("PIG", "money-chance", 5.0);
+        sheepHealAmount = getEffectBase("SHEEP", "heal-amount", 10.0);
+        squidChestBonus = getEffectBase("SQUID", "fishing-chest-bonus", 15.0);
+        turtleDamageReduction = getEffectBase("TURTLE", "mob-damage-reduction", 1.0);
+        llamaMobDamage = getEffectBase("LLAMA", "mob-damage-bonus", 2.0);
+        endermanFreeTpChance = getEffectBase("ENDERMAN", "free-tp-chance", 7.5);
+        witchPotionDuration = getEffectBase("WITCH", "potion-duration", 15.0);
+        huskMobsphereChance = getEffectBase("HUSK", "mobsphere-chance", 12.0);
+        mooshroomFarmSpeed = getEffectBase("MOOSHROOM", "farm-speed", 20.0);
+        frogHoneySpeed = getEffectBase("FROG", "honey-speed", 15.0);
+        wolfPvpDamage = getEffectBase("WOLF", "pvp-damage", 5.0);
+        beeHoneyQuality = getEffectBase("BEE", "honey-quality", 25.0);
+        beeRareHoneyChance = getSpecialValue("BEE", "double-honey-chance", 25.0);
+        traderCostReduction = getEffectBase("WANDERING_TRADER", "craft-cost-reduction", 1.43);
+        pandaYieldBonus = getEffectBase("PANDA", "farm-storage", 30.0);
+        dungeonDamageBonus = getEffectBase("ZOMBIE", "dungeon-damage", 3.0);
+        phantomTreasureChance = getEffectBase("PHANTOM", "ocean-treasure", 10.0);
+        glowSquidRareOreChance = getEffectBase("GLOW_SQUID", "rare-ore-chance", 18.0);
+        guardianFishingBonus = getEffectBase("GUARDIAN", "all-fishing", 10.0);
+        snifferMiningBonus = getEffectBase("SNIFFER", "all-mining", 18.0);
+        witherSkeletonSpecialChance = getEffectBase("WITHER_SKELETON", "special-materials", 6.25);
+        witherBossDamage = getEffectBase("WITHER", "boss-damage", 5.0);
+        witherSpecialDamage = getSpecialValue("WITHER", "wither-damage", 250.0);
+        witherSpecialDuration = (int) Math.round(getSpecialValue("WITHER", "wither-duration", 5.0));
+        giantMythicChance = getEffectBase("GIANT", "mythic-items", 5.0);
+        ironGolemDamageMultiplier = getEffectBase("IRON_GOLEM", "power-strike", 2.0);
+    }
+
+    private double getEffectBase(String petKey, String effectKey, double defaultValue) {
+        if (petsConfig == null) {
+            return defaultValue;
+        }
+
+        String effectPath = "pets." + petKey + ".effects." + effectKey;
+        if (petsConfig.contains(effectPath + ".base")) {
+            return petsConfig.getDouble(effectPath + ".base", defaultValue);
+        }
+
+        return petsConfig.getDouble(effectPath, defaultValue);
+    }
+
+    private double getSpecialValue(String petKey, String key, double defaultValue) {
+        if (petsConfig == null) {
+            return defaultValue;
+        }
+
+        String path = "pets." + petKey + ".special-effect." + key;
+        return petsConfig.getDouble(path, defaultValue);
     }
 
     public int getMythicBossXp(String internalName) {

@@ -564,7 +564,7 @@ public class PetPlaceholderExpansion extends PlaceholderExpansion {
     private double getBossWitherDamage(List<Pet> pets) {
         for (Pet pet : pets) {
             if (pet.getType() == PetType.WITHER && pet.hasSpecialEffect()) {
-                return 250.0;
+                return plugin.getConfigManager().getWitherSpecialDamage();
             }
         }
         return 0;
@@ -573,7 +573,7 @@ public class PetPlaceholderExpansion extends PlaceholderExpansion {
     private double getBossWitherDuration(List<Pet> pets) {
         for (Pet pet : pets) {
             if (pet.getType() == PetType.WITHER && pet.hasSpecialEffect()) {
-                return 5.0;
+                return plugin.getConfigManager().getWitherSpecialDuration();
             }
         }
         return 0;

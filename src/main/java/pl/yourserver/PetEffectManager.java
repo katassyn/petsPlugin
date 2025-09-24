@@ -338,10 +338,9 @@ public class PetEffectManager {
                 double bossDamage = pet.calculateBaseEffect(5.0);
                 integrations.setPlaceholder("boss_damage_bonus", bossDamage);
 
-                // Specjalny efekt na 100lvl: special wither 250dmg/s for 5s
                 if (pet.hasSpecialEffect()) {
-                    integrations.setPlaceholder("boss_wither_damage", 250.0);
-                    integrations.setPlaceholder("boss_wither_duration", 5.0);
+                    integrations.setPlaceholder("boss_wither_damage", plugin.getConfigManager().getWitherSpecialDamage());
+                    integrations.setPlaceholder("boss_wither_duration", plugin.getConfigManager().getWitherSpecialDuration());
                 }
                 break;
 
@@ -543,7 +542,14 @@ public class PetEffectManager {
                 return "&8+" + wardenSlots + " additional pet slots";
             case WITHER:
                 double witherBoss = pet.calculateBaseEffect(5.0);
-                String witherBossExtra = pet.hasSpecialEffect() ? " + 250 wither damage/s for 5s" : "";
+                String witherBossExtra = "";
+                if (pet.hasSpecialEffect()) {
+                    witherBossExtra = " + "
+                            + df.format(plugin.getConfigManager().getWitherSpecialDamage())
+                            + " wither damage/s for "
+                            + plugin.getConfigManager().getWitherSpecialDuration()
+                            + "s";
+                }
                 return "&4+" + df.format(witherBoss) + "% boss damage" + witherBossExtra;
             case GIANT:
                 double giantMythic = pet.calculateBaseEffect(5.0);

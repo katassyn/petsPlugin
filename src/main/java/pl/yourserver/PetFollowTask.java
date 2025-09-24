@@ -100,7 +100,7 @@ public class PetFollowTask extends BukkitRunnable {
                         Mob mob = (Mob) entity;
 
                         float playerSpeed = player.getWalkSpeed();
-                        double petSpeed = Math.max(0.2, Math.min(playerSpeed * 1.5, 0.6));
+                        double petSpeed = Math.max(0.35, Math.min(playerSpeed * 1.8, 0.8));
 
                         if (mob instanceof LivingEntity) {
                             LivingEntity living = (LivingEntity) mob;

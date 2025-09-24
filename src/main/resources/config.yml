@@ -75,122 +75,6 @@ head-database:
     WITHER: "81665"
     GIANT: "121331"
 
-effects:
-  # Effect tick rate (in ticks, 20 = 1 second)
-  tick-rate: 20
-
-  # Effect values (easy to modify)
-  cow:
-    bonus-health: 4.0
-
-  pig:
-    money-chance: 5.0 # Percent
-    money-min: 1
-    money-max: 10
-
-  sheep:
-    heal-amount: 2.0
-    heal-cooldown: 20 # Seconds
-
-  chicken:
-    luck-level: 1
-
-  snow-golem:
-    slow-radius: 5.0
-    slow-duration: 3 # Seconds
-
-  iron-golem:
-    damage-multiplier: 2.0
-    cooldown: 15 # Seconds
-
-  squid:
-    chest-chance-bonus: 15.0 # Percent
-
-  turtle:
-    damage-reduction: 10.0 # Percent
-
-  llama:
-    mob-damage-bonus: 15.0 # Percent
-
-  enderman:
-    free-tp-chance: 10.0 # Percent
-
-  witch:
-    potion-duration-bonus: 25.0 # Percent
-
-  husk:
-    mobsphere-chance-bonus: 12.0 # Percent
-
-  mooshroom:
-    farm-speed-bonus: 20.0 # Percent
-
-  frog:
-    honey-speed-bonus: 15.0 # Percent
-
-  wolf:
-    pvp-damage-bonus: 20.0 # Percent
-    lifesteal: 15.0 # Percent (special effect)
-
-  bee:
-    honey-quality-bonus: 25.0 # Percent
-    rare-honey-chance: 15.0 # Percent
-
-  wandering-trader:
-    craft-cost-reduction: 15.0 # Percent
-    refund-chance: 10.0 # Percent (special effect)
-
-  panda:
-    farm-yield-bonus: 30.0 # Percent
-
-  # Dungeon pets damage bonus
-  dungeon-pets:
-    damage-bonus: 20.0 # Percent
-
-  phantom:
-    treasure-chance-bonus: 20.0 # Percent
-
-  glow-squid:
-    rare-ore-chance-bonus: 18.0 # Percent
-
-  # Mythic pets
-  guardian:
-    all-fishing-bonus: 30.0 # Percent
-
-  sniffer:
-    all-mining-bonus: 30.0 # Percent
-
-  wither-skeleton:
-    special-material-chance: 40.0 # Percent
-
-  wither:
-    boss-damage-bonus: 35.0 # Percent
-
-  giant:
-    mythic-item-chance-bonus: 50.0 # Percent
-
-# Feeding settings
-feeding:
-  # Andermant item settings
-  andermant-item:
-    material: "SMALL_AMETHYST_BUD"
-    name: "&5&lAndermant"
-    lore:
-      - "&o&7Premium currency"
-
-  # Feed amounts required (base * (level/5))
-  base-feed-amount: 100
-
-  # Levels that require feeding
-  feed-levels: [4, 9, 14, 19, 24, 29, 34, 39, 44, 49, 54, 59, 64, 69, 74, 79, 84, 89, 94, 99]
-
-# Level milestones
-milestones:
-  # Bonus multipliers at milestones
-  level-25-bonus: 0.25
-  level-50-bonus: 0.35
-  level-75-bonus: 0.45
-  level-100-bonus: 0.60
-
 # Boss detection configuration for Wither pet
 bosses:
   # Substrings that should match boss display names (legacy support)
@@ -203,103 +87,87 @@ bosses:
   # MythicMob internal names flagged as bosses with their xp-per-mob values
   mythic-mobs:
     grimmag_inf:
-      xp-per-mob: 60000
+      xp-per-mob: 100
     grimmag_hell:
-      xp-per-mob: 180000
+      xp-per-mob: 100
     grimmag_blood:
-      xp-per-mob: 600000
+      xp-per-mob: 100
     arachna_scourge_of_duria_inf:
-      xp-per-mob: 65000
+      xp-per-mob: 100
     arachna_scourge_of_duria_hell:
-      xp-per-mob: 190000
+      xp-per-mob: 100
     arachna_scourge_of_duria_blood:
-      xp-per-mob: 650000
+      xp-per-mob: 100
     undead_parallel_world_king_heredur_inf:
-      xp-per-mob: 70000
+      xp-per-mob: 100
     undead_parallel_world_king_heredur_hell:
-      xp-per-mob: 200000
+      xp-per-mob: 100
     undead_parallel_world_king_heredur_blood:
-      xp-per-mob: 700000
+      xp-per-mob: 100
     bearach_champion_of_wilds_inf:
-      xp-per-mob: 75000
+      xp-per-mob: 100
     bearach_champion_of_wilds_hell:
-      xp-per-mob: 210000
+      xp-per-mob: 100
     bearach_champion_of_wilds_blood:
-      xp-per-mob: 750000
+      xp-per-mob: 100
     khalys_leader_of_cultists_inf:
-      xp-per-mob: 80000
+      xp-per-mob: 100
     khalys_leader_of_cultists_hell:
-      xp-per-mob: 220000
+      xp-per-mob: 100
     khalys_leader_of_cultists_blood:
-      xp-per-mob: 800000
+      xp-per-mob: 100
     skeledragon_phase1_inf:
-      xp-per-mob: 29000
+      xp-per-mob: 100
     skeledragon_phase2_inf:
-      xp-per-mob: 29000
+      xp-per-mob: 100
     mortis_phase3_inf:
-      xp-per-mob: 29000
+      xp-per-mob: 100
     skeledragon_phase1_hell:
-      xp-per-mob: 77000
+      xp-per-mob: 100
     skeledragon_phase2_hell:
-      xp-per-mob: 77000
+      xp-per-mob: 100
     mortis_phase3_hell:
-      xp-per-mob: 77000
+      xp-per-mob: 100
     skeledragon_phase1_blood:
-      xp-per-mob: 280000
+      xp-per-mob: 100
     skeledragon_phase2_blood:
-      xp-per-mob: 280000
+      xp-per-mob: 100
     mortis_phase3_blood:
-      xp-per-mob: 280000
+      xp-per-mob: 100
     herald_of_anderworld_inf:
-      xp-per-mob: 90000
+      xp-per-mob: 100
     herald_of_anderworld_hell:
-      xp-per-mob: 240000
+      xp-per-mob: 100
     herald_of_anderworld_blood:
-      xp-per-mob: 880000
+      xp-per-mob: 100
     sigrismarr_priest_of_fjalnir_inf:
-      xp-per-mob: 95000
+      xp-per-mob: 100
     sigrismarr_priest_of_fjalnir_hell:
-      xp-per-mob: 250000
+      xp-per-mob: 100
     sigrismarr_priest_of_fjalnir_blood:
-      xp-per-mob: 920000
+      xp-per-mob: 100
     medusa_inf:
-      xp-per-mob: 100000
+      xp-per-mob: 100
     medusa_hell:
-      xp-per-mob: 260000
+      xp-per-mob: 100
     medusa_blood:
-      xp-per-mob: 960000
+      xp-per-mob: 100
     parallel_world_gorga_inf:
-      xp-per-mob: 110000
+      xp-per-mob: 100
     parallel_world_gorga_hell:
-      xp-per-mob: 280000
+      xp-per-mob: 100
     parallel_world_gorga_blood:
-      xp-per-mob: 1000000
+      xp-per-mob: 100
     umbraxis_shadowlord:
-      xp-per-mob: 120000
+      xp-per-mob: 100
     poseidon_sea_lord:
-      xp-per-mob: 130000
+      xp-per-mob: 100
     zeus_king_of_gods:
-      xp-per-mob: 360000
+      xp-per-mob: 100
     daedalus_master_architect:
-      xp-per-mob: 1200000
+      xp-per-mob: 100
     hades_lord_of_underworld:
-      xp-per-mob: 2000000
-
-# Integration settings
-integrations:
-  # Enable/disable integrations
-  vaults: true
-  fishing-plugin: true
-  dungeon-plugin: true
-  alchemy-plugin: true
-  mine-plugin: true
-  farming-plugin: true
-  beekeeper-plugin: true
-  crafting-plugin: true
-  mythicmobs: true
-
-  # Integration placeholders (for PlaceholderAPI)
-  placeholder-prefix: "pet_"
+      xp-per-mob: 100
 
 # Messages
 messages:
