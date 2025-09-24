@@ -37,8 +37,9 @@ public class PetBlockListener implements Listener {
                 org.bukkit.persistence.PersistentDataType.STRING
             );
 
+            PetRarity rarity = null;
             try {
-                PetRarity rarity = PetRarity.valueOf(rarityName);
+                rarity = PetRarity.valueOf(rarityName);
                 PetType petType = petDropManager.getRandomPetOfRarity(rarity);
                 String message = petDropManager.getPlugin().getConfigManager().getConfig().getString("pet-drops.drop-messages.pet-obtained",
                                                                "&aYou obtained a %rarity% %pet%!");
@@ -55,6 +56,9 @@ public class PetBlockListener implements Listener {
                 // Add pet head to inventory
                 if (player.getInventory().firstEmpty() != -1) {
                     player.getInventory().addItem(petHead);
+                    if (rarity != null) {
+                        petDropManager.broadcastPickupMessage(player, rarity);
+                    }
                     event.getItem().remove();
                     event.setCancelled(true);
                 } else {
@@ -107,7 +111,7 @@ public class PetBlockListener implements Listener {
         lore.add("");
         lore.add(TextUtil.colorize("&7Level: &f" + pet.getLevel() + "/" + pet.getRarity().getMaxLevel()));
         lore.add(TextUtil.colorize("&7Experience: &f" + String.format("%.1f", pet.getExperience()) + "/" + String.format("%.1f", pet.getRequiredExperience())));
-        lore.add(TextUtil.colorize("&fRarity: &f&l" + pet.getRarity().name()));
+        lore.add(TextUtil.colorize("&7Rarity: " + pet.getRarity().getDisplayName()));
         lore.add(TextUtil.colorize("&8-------------------"));
 
         // Pet effect
@@ -115,7 +119,7 @@ public class PetBlockListener implements Listener {
         lore.add(TextUtil.colorize("&7Effect: " + effect));
 
         if (pet.hasSpecialEffect()) {
-            lore.add(TextUtil.colorize("&6✦ Special Effect Unlocked!"));
+            lore.add(TextUtil.colorize("&6* Special Effect Unlocked!"));
         }
 
         lore.add("");

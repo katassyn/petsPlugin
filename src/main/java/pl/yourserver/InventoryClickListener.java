@@ -252,7 +252,7 @@ public class InventoryClickListener implements Listener {
         lore.add("");
         lore.add(TextUtil.colorize("&7Level: &f" + pet.getLevel() + "/" + pet.getRarity().getMaxLevel()));
         lore.add(TextUtil.colorize("&7Experience: &f" + String.format("%.1f", pet.getExperience()) + "/" + String.format("%.1f", pet.getRequiredExperience())));
-        lore.add(TextUtil.colorize("&fRarity: &f&l" + pet.getRarity().name()));
+        lore.add(TextUtil.colorize("&7Rarity: " + pet.getRarity().getDisplayName()));
         lore.add(TextUtil.colorize("&8-------------------"));
 
         // Efekt peta

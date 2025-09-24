@@ -62,7 +62,7 @@ public class Pet {
 
         while (experience >= requiredExp && level < maxLevel) {
             // Sprawdź czy następny level wymaga karmienia
-            if ((level + 1) % 5 == 0 && feedCount == 0) {
+            if (requiresFeedingBeforeLevel(level + 1) && feedCount == 0) {
                 // Zatrzymaj level up - wymaga karmienia na poziomie 5, 10, 15, itd.
                 experience = requiredExp;
                 break;
@@ -72,7 +72,7 @@ public class Pet {
             level++;
 
             // Reset licznika karmienia po osiągnięciu poziomu wymagającego karmienia
-            if (level % 5 == 0) {
+            if (requiresFeedingBeforeLevel(level)) {
                 feedCount = 0;
             }
 
@@ -121,7 +121,7 @@ public class Pet {
                 level++;
 
                 // Reset licznika karmienia po osiągnięciu poziomu
-                if (level % 5 == 0) {
+                if (requiresFeedingBeforeLevel(level)) {
                     feedCount = 0;
                 }
             }
@@ -141,8 +141,24 @@ public class Pet {
     public boolean needsFeeding() {
         // Pet wymaga karmienia na poziomach 5, 10, 15, 20, itd.
         // Gdy ma wystarczająco exp do następnego poziomu i następny poziom to wielokrotność 5
-        return (level + 1) % 5 == 0 && feedCount == 0 && experience >= getRequiredExperience();
+        int nextLevel = level + 1;
+        return nextLevel <= rarity.getMaxLevel()
+                && feedCount == 0
+                && experience >= getRequiredExperience()
+                && requiresFeedingBeforeLevel(nextLevel);
     }
+
+    private boolean requiresFeedingBeforeLevel(int targetLevel) {
+        int maxLevel = rarity.getMaxLevel();
+        if (targetLevel <= 0 || targetLevel > maxLevel) {
+            return false;
+        }
+        if (targetLevel == maxLevel) {
+            return true;
+        }
+        return targetLevel % 5 == 0;
+    }
+
 
     // Nowa mechanika obliczania efektów z ustalonymi wartościami
     public double calculateEffectValue(double baseValue, double perLevelValue) {

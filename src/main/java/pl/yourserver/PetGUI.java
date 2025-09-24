@@ -140,7 +140,7 @@ public class PetGUI {
         lore.add("");
         lore.add(TextUtil.colorize("&7Level: &f" + pet.getLevel() + "/" + pet.getRarity().getMaxLevel()));
         lore.add(createExpBar(pet));
-        lore.add(TextUtil.colorize("&fRarity: &f&l" + pet.getRarity().name()));
+        lore.add(TextUtil.colorize("&7Rarity: " + pet.getRarity().getDisplayName()));
         lore.add(TextUtil.colorize("&8-------------------"));
 
         // Efekty peta
@@ -224,7 +224,7 @@ public class PetGUI {
         lore.add(TextUtil.colorize("&7Level: &f" + pet.getLevel() + "/" + pet.getRarity().getMaxLevel()));
         lore.add(createExpBar(pet));
         lore.add(TextUtil.colorize("&7Experience: &f" + df.format(pet.getExperience()) + "/" + df.format(pet.getRequiredExperience())));
-        lore.add(TextUtil.colorize("&fRarity: &f&l" + pet.getRarity().name()));
+        lore.add(TextUtil.colorize("&7Rarity: " + pet.getRarity().getDisplayName()));
         lore.add(TextUtil.colorize("&8-------------------"));
 
         // Efekty

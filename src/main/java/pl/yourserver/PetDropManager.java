@@ -35,7 +35,7 @@ public class PetDropManager {
 
         if (shouldDropPet()) {
             PetRarity rarity = determineDropRarity();
-            dropPetBlock(entity.getLocation(), rarity, killer);
+            dropPetBlock(entity.getLocation(), rarity);
         }
     }
 
@@ -83,13 +83,11 @@ public class PetDropManager {
         }
     }
 
-    private void dropPetBlock(Location location, PetRarity rarity, Player killer) {
+    private void dropPetBlock(Location location, PetRarity rarity) {
         Material blockMaterial = getBlockMaterial(rarity);
         ItemStack petBlock = createPetBlock(blockMaterial, rarity);
 
         location.getWorld().dropItemNaturally(location, petBlock);
-
-        broadcastDropMessage(killer, rarity);
     }
 
     private Material getBlockMaterial(PetRarity rarity) {
@@ -148,10 +146,10 @@ public class PetDropManager {
         return item;
     }
 
-    private void broadcastDropMessage(Player killer, PetRarity rarity) {
+    public void broadcastPickupMessage(Player player, PetRarity rarity) {
         String message = configManager.getConfig().getString("pet-drops.drop-messages.pet-dropped",
                                                             "&8[&6DROP&8] &7%player% &7has dropped a %rarity% &7pet!");
-        message = message.replace("%player%", killer.getName())
+        message = message.replace("%player%", player.getName())
                          .replace("%rarity%", rarity.getDisplayName());
 
         Bukkit.broadcastMessage(TextUtil.colorize(message));
