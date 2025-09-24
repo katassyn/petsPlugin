@@ -1,0 +1,91 @@
+# MythicMobs konfiguracja dla petów - duże moby
+# Skopiuj ten plik do plugins/MythicMobs/Mobs/PetMobs.yml
+
+# Pet Ender Dragon - zmniejszony rozmiar
+PetEnderDragon:
+  Type: ENDER_DRAGON
+  Health: 200
+  Damage: 0
+  Options:
+    Silent: true
+    Invulnerable: true
+    NoAI: true
+    Collidable: false
+    RemoveWhenFarAway: false
+    PreventOtherDrops: true
+    PreventMobKillDrops: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    PreventRenaming: true
+  Modules:
+    ThreatTable: false
+  AIGoals: []
+  AITargets: []
+  # Użyj Scale jeśli jest dostępne (niektóre wersje MythicMobs)
+  # Scale: 0.3
+
+# Pet Wither - zmniejszony rozmiar
+PetWither:
+  Type: WITHER
+  Health: 200
+  Damage: 0
+  Options:
+    Silent: true
+    Invulnerable: true
+    NoAI: true
+    Collidable: false
+    RemoveWhenFarAway: false
+    PreventOtherDrops: true
+    PreventMobKillDrops: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    PreventRenaming: true
+  Modules:
+    ThreatTable: false
+  AIGoals: []
+  AITargets: []
+  # Scale: 0.4
+
+# Pet Giant - zmniejszony rozmiar
+PetGiant:
+  Type: GIANT
+  Health: 200
+  Damage: 0
+  Options:
+    Silent: true
+    Invulnerable: true
+    NoAI: true
+    Collidable: false
+    RemoveWhenFarAway: false
+    PreventOtherDrops: true
+    PreventMobKillDrops: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    PreventRenaming: true
+  Modules:
+    ThreatTable: false
+  AIGoals: []
+  AITargets: []
+  # Scale: 0.2
+
+# Pet Warden - zmniejszony rozmiar
+PetWarden:
+  Type: WARDEN
+  Health: 200
+  Damage: 0
+  Options:
+    Silent: true
+    Invulnerable: true
+    NoAI: true
+    Collidable: false
+    RemoveWhenFarAway: false
+    PreventOtherDrops: true
+    PreventMobKillDrops: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    PreventRenaming: true
+  Modules:
+    ThreatTable: false
+  AIGoals: []
+  AITargets: []
+  # Scale: 0.5
