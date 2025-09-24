@@ -35,6 +35,7 @@ public class IntegrationManager extends PlaceholderExpansion {
 
     // API instances
     private Object pouchAPI;
+    private boolean libsDisguisesEnabled;
 
     public IntegrationManager(PetPlugin plugin) {
         this.plugin = plugin;
@@ -110,11 +111,23 @@ public class IntegrationManager extends PlaceholderExpansion {
             }
         }
 
+        // LibsDisguises
+        libsDisguisesEnabled = Bukkit.getPluginManager().getPlugin("LibsDisguises") != null;
+        if (libsDisguisesEnabled) {
+            plugin.getLogger().info("§aLibsDisguises integration loaded!");
+        } else {
+            plugin.getLogger().warning("§cLibsDisguises plugin not found! Pet disguises will be unavailable.");
+        }
+
         // Register PlaceholderAPI expansion
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             this.register();
             plugin.getLogger().info("§aPlaceholderAPI integration loaded!");
         }
+    }
+
+    public boolean isLibsDisguisesEnabled() {
+        return libsDisguisesEnabled;
     }
 
     // PlaceholderAPI methods
