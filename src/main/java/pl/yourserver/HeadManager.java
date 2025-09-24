@@ -1,11 +1,11 @@
 package pl.yourserver;
 
-import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.Method;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -13,7 +13,8 @@ import java.util.logging.Level;
 public class HeadManager {
 
     private final PetPlugin plugin;
-    private HeadDatabaseAPI headDatabaseAPI;
+    private Object headDatabaseAPI;
+    private Method getItemHeadMethod;
     private final Map<PetType, ItemStack> petHeadCache = new EnumMap<>(PetType.class);
 
     public HeadManager(PetPlugin plugin) {
@@ -22,6 +23,8 @@ public class HeadManager {
 
     public void initialize() {
         petHeadCache.clear();
+        headDatabaseAPI = null;
+        getItemHeadMethod = null;
 
         if (!plugin.getConfigManager().isHeadDatabaseEnabled()) {
             headDatabaseAPI = null;
@@ -39,9 +42,12 @@ public class HeadManager {
         try {
             String version = headDatabasePlugin.getDescription().getVersion();
             plugin.getLogger().info("Hooked into HeadDatabase v" + version + "");
-            headDatabaseAPI = new HeadDatabaseAPI();
+            Class<?> apiClass = Class.forName("me.arcaniax.hdb.api.HeadDatabaseAPI");
+            headDatabaseAPI = apiClass.getDeclaredConstructor().newInstance();
+            getItemHeadMethod = apiClass.getMethod("getItemHead", String.class);
         } catch (Throwable throwable) {
             headDatabaseAPI = null;
+            getItemHeadMethod = null;
             plugin.getLogger().log(Level.WARNING, "Failed to initialize HeadDatabase API. Falling back to bundled textures.", throwable);
         }
     }
@@ -51,7 +57,7 @@ public class HeadManager {
     }
 
     public boolean isHeadDatabaseAvailable() {
-        return headDatabaseAPI != null;
+        return headDatabaseAPI != null && getItemHeadMethod != null;
     }
 
     public ItemStack getHeadById(String id) {
@@ -60,8 +66,11 @@ public class HeadManager {
         }
 
         try {
-            ItemStack itemStack = headDatabaseAPI.getItemHead(id);
-            return itemStack != null ? itemStack.clone() : null;
+            Object result = getItemHeadMethod.invoke(headDatabaseAPI, id);
+            if (result instanceof ItemStack itemStack) {
+                return itemStack.clone();
+            }
+            return null;
         } catch (Throwable throwable) {
             plugin.getLogger().log(Level.WARNING, "Failed to fetch head with id '" + id + "' from HeadDatabase.", throwable);
             return null;
