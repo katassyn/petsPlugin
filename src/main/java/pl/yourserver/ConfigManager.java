@@ -1,12 +1,15 @@
 package pl.yourserver;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 // import pl.yourserver.petplugin.PetPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigManager {
 
@@ -22,6 +25,10 @@ public class ConfigManager {
     private int maxPetsDefault;
     private double followDistance;
     private double teleportDistance;
+
+    // HeadDatabase integration
+    private boolean headDatabaseEnabled;
+    private Map<PetType, String> headDatabaseIds = new EnumMap<>(PetType.class);
 
     // Effect values
     private double cowBonusHealth;
@@ -87,6 +94,14 @@ public class ConfigManager {
         followDistance = config.getDouble("settings.follow-distance", 10.0);
         teleportDistance = config.getDouble("settings.teleport-distance", 20.0);
 
+        headDatabaseEnabled = config.getBoolean("head-database.enabled", true);
+        headDatabaseIds = new EnumMap<>(PetType.class);
+        ConfigurationSection headSection = config.getConfigurationSection("head-database.ids");
+        for (PetType petType : PetType.values()) {
+            String id = headSection != null ? headSection.getString(petType.name(), "") : "";
+            headDatabaseIds.put(petType, id != null ? id : "");
+        }
+
         // All effect values now come from pets.yml, not config.yml
 
         // Boss list
@@ -132,6 +147,14 @@ public class ConfigManager {
 
     public double getTeleportDistance() {
         return teleportDistance;
+    }
+
+    public boolean isHeadDatabaseEnabled() {
+        return headDatabaseEnabled;
+    }
+
+    public String getHeadDatabaseId(PetType petType) {
+        return headDatabaseIds.getOrDefault(petType, "");
     }
 
     public double getCowBonusHealth() {

@@ -228,9 +228,8 @@ public class PetManager {
 
     // Utworz głowę peta
     private ItemStack createPetHead(Pet pet) {
-        return new ItemBuilder(Material.PLAYER_HEAD)
-                .setSkullTexture(pet.getType().getSkullTexture())
-                .build();
+        ItemStack baseHead = plugin.getHeadManager().getPetHead(pet.getType());
+        return baseHead != null ? baseHead : new ItemStack(Material.PLAYER_HEAD);
     }
 
     // Dodaj peta do gracza

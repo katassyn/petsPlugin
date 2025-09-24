@@ -36,6 +36,45 @@ settings:
   exp-multiplier: 1.0
 
 # Pet effect settings
+head-database:
+  # Enable integration with the HeadDatabase plugin. When disabled the plugin will use built-in base64 textures.
+  enabled: true
+  # Configure the HeadDatabase ID for each pet (example: "12345" or "MHF_Cow"). Leave empty to use the fallback texture.
+  ids:
+    COW: ""
+    PIG: ""
+    SHEEP: ""
+    CHICKEN: ""
+    DONKEY: ""
+    SNOW_GOLEM: ""
+    IRON_GOLEM: ""
+    SQUID: ""
+    TURTLE: ""
+    LLAMA: ""
+    ENDERMAN: ""
+    WITCH: ""
+    HUSK: ""
+    MOOSHROOM: ""
+    FROG: ""
+    WOLF: ""
+    BEE: ""
+    WANDERING_TRADER: ""
+    PANDA: ""
+    ZOMBIE: ""
+    SKELETON: ""
+    SPIDER: ""
+    CREEPER: ""
+    SLIME: ""
+    PHANTOM: ""
+    GLOW_SQUID: ""
+    GUARDIAN: ""
+    SNIFFER: ""
+    WITHER_SKELETON: ""
+    ENDER_DRAGON: ""
+    WARDEN: ""
+    WITHER: ""
+    GIANT: ""
+
 effects:
   # Effect tick rate (in ticks, 20 = 1 second)
   tick-rate: 20

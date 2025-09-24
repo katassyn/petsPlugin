@@ -266,8 +266,8 @@ public class InventoryClickListener implements Listener {
         lore.add("");
         lore.add(TextUtil.colorize("&eRight-click to use this pet!"));
 
-        ItemStack item = new ItemBuilder(Material.PLAYER_HEAD)
-                .setSkullTexture(pet.getType().getSkullTexture())
+        ItemStack baseHead = plugin.getHeadManager().getPetHead(pet.getType());
+        ItemStack item = (baseHead != null ? new ItemBuilder(baseHead) : new ItemBuilder(Material.PLAYER_HEAD))
                 .setName(TextUtil.colorize(pet.getRarity().getColor() + pet.getType().getDisplayName()))
                 .setLore(lore)
                 .build();
