@@ -1,8 +1,10 @@
 package pl.yourserver;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -44,8 +46,10 @@ public class LibsDisguisesHook {
     private Method getWatcherMethod;
     private Method watcherSetCustomNameMethod;
     private Method watcherSetCustomNameVisibleMethod;
+    private Method watcherSetHelmetMethod;
     private Method flagWatcherSetYModifierMethod;
     private Method flagWatcherSetNameYModifierMethod;
+    private Method flagWatcherSetInvisibleMethod;
     private Method disguiseEntityMethod;
     private Method isDisguisedMethod;
     private Method undisguiseToAllMethod;
@@ -62,8 +66,13 @@ public class LibsDisguisesHook {
     private Class<?> phantomWatcherClass;
     private Method phantomSetSizeMethod;
 
-    private Class<?> enderDragonWatcherClass;
-    private Method enderDragonSetPhaseMethod;
+    private Class<?> armorStandWatcherClass;
+    private Method armorStandSetSmallMethod;
+    private Method armorStandSetMarkerMethod;
+    private Method armorStandSetBasePlateMethod;
+    private Method armorStandSetInvisibleMethod;
+    private Method armorStandSetNoGravityMethod;
+    private Method armorStandSetGravityMethod;
 
     public LibsDisguisesHook(PetPlugin plugin) {
         this.plugin = plugin;
@@ -106,7 +115,11 @@ public class LibsDisguisesHook {
         }
 
         try {
-            Object disguiseType = resolveDisguiseType(pet.getType().getEntityType());
+            EntityType disguiseEntityType = resolveEffectiveEntityType(pet.getType());
+            Object disguiseType = resolveDisguiseType(disguiseEntityType);
+            if (disguiseType == null && pet.getType() == PetType.ENDER_DRAGON) {
+                disguiseType = resolveDisguiseType(pet.getType().getEntityType());
+            }
             if (disguiseType == null) {
                 plugin.getLogger().warning("Unable to resolve LibsDisguises disguise type for pet " + pet.getType().name());
                 return false;
@@ -178,8 +191,10 @@ public class LibsDisguisesHook {
             getWatcherMethod = findMethod(mobDisguiseClass, "getWatcher");
             watcherSetCustomNameMethod = findMethod(flagWatcherClass, "setCustomName", String.class);
             watcherSetCustomNameVisibleMethod = findMethod(flagWatcherClass, "setCustomNameVisible", boolean.class);
+            watcherSetHelmetMethod = findMethod(flagWatcherClass, "setHelmet", ItemStack.class);
             flagWatcherSetYModifierMethod = findMethod(flagWatcherClass, "setYModifier", float.class);
             flagWatcherSetNameYModifierMethod = findMethod(flagWatcherClass, "setNameYModifier", float.class);
+            flagWatcherSetInvisibleMethod = findMethod(flagWatcherClass, "setInvisible", boolean.class);
 
             ageableWatcherClass = findClass("me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher");
             if (ageableWatcherClass != null) {
@@ -201,9 +216,18 @@ public class LibsDisguisesHook {
                 phantomSetSizeMethod = findMethod(phantomWatcherClass, "setSize", int.class);
             }
 
-            enderDragonWatcherClass = findClass("me.libraryaddict.disguise.disguisetypes.watchers.EnderDragonWatcher");
-            if (enderDragonWatcherClass != null) {
-                enderDragonSetPhaseMethod = findMethod(enderDragonWatcherClass, "setPhase", int.class);
+            armorStandWatcherClass = findClass("me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher");
+            if (armorStandWatcherClass != null) {
+                armorStandSetSmallMethod = findMethod(armorStandWatcherClass, "setSmall", boolean.class);
+                armorStandSetMarkerMethod = findMethod(armorStandWatcherClass, "setMarker", boolean.class);
+                armorStandSetBasePlateMethod = findMethod(armorStandWatcherClass, "setBasePlate", boolean.class);
+                armorStandSetInvisibleMethod = findMethod(armorStandWatcherClass, "setInvisible", boolean.class);
+                armorStandSetNoGravityMethod = findMethod(armorStandWatcherClass, "setNoGravity", boolean.class);
+                armorStandSetGravityMethod = findMethod(armorStandWatcherClass, "setGravity", boolean.class);
+
+                if (watcherSetHelmetMethod == null) {
+                    watcherSetHelmetMethod = findMethod(armorStandWatcherClass, "setHelmet", ItemStack.class);
+                }
             }
 
             disguiseEntityMethod = disguiseAPIClass.getMethod("disguiseEntity", Entity.class, disguiseClass);
@@ -236,6 +260,46 @@ public class LibsDisguisesHook {
         return null;
     }
 
+    private EntityType resolveEffectiveEntityType(PetType type) {
+        if (type == null) {
+            return null;
+        }
+
+        if (type == PetType.ENDER_DRAGON) {
+            return EntityType.ARMOR_STAND;
+        }
+
+        return type.getEntityType();
+    }
+
+    private void applyMiniDragonWatcherTweaks(Object watcher) {
+        if (watcher == null) {
+            return;
+        }
+
+        invokeOptional(flagWatcherSetInvisibleMethod, watcher, Boolean.TRUE);
+        invokeOptional(watcherSetHelmetMethod, watcher, createDragonHeadItem());
+
+        if (armorStandWatcherClass != null && armorStandWatcherClass.isInstance(watcher)) {
+            invokeOptional(armorStandSetSmallMethod, watcher, Boolean.TRUE);
+            invokeOptional(armorStandSetMarkerMethod, watcher, Boolean.TRUE);
+            invokeOptional(armorStandSetBasePlateMethod, watcher, Boolean.FALSE);
+            invokeOptional(armorStandSetInvisibleMethod, watcher, Boolean.TRUE);
+            if (armorStandSetNoGravityMethod != null) {
+                invokeOptional(armorStandSetNoGravityMethod, watcher, Boolean.TRUE);
+            } else {
+                invokeOptional(armorStandSetGravityMethod, watcher, Boolean.FALSE);
+            }
+        }
+
+        invokeOptional(flagWatcherSetYModifierMethod, watcher, -0.35F);
+        invokeOptional(flagWatcherSetNameYModifierMethod, watcher, -0.1F);
+    }
+
+    private ItemStack createDragonHeadItem() {
+        return new ItemStack(Material.DRAGON_HEAD);
+    }
+
     private void applyWatcherTweaks(Pet pet, Object watcher) {
         if (pet == null || watcher == null) {
             return;
@@ -266,16 +330,13 @@ public class LibsDisguisesHook {
             invokeOptional(phantomSetSizeMethod, watcher, 1);
         }
 
+        if (type == PetType.ENDER_DRAGON) {
+            applyMiniDragonWatcherTweaks(watcher);
+            return;
+        }
+
         if (flagWatcherSetYModifierMethod != null) {
             switch (type) {
-                case ENDER_DRAGON:
-                    invokeOptional(flagWatcherSetYModifierMethod, watcher, -1.35F);
-                    invokeOptional(flagWatcherSetNameYModifierMethod, watcher, -0.45F);
-                    if (enderDragonWatcherClass != null
-                            && enderDragonWatcherClass.isInstance(watcher)) {
-                        invokeOptional(enderDragonSetPhaseMethod, watcher, 0);
-                    }
-                    break;
                 case WITHER:
                     invokeOptional(flagWatcherSetYModifierMethod, watcher, -0.3F);
                     break;
