@@ -1,29 +1,32 @@
 package pl.yourserver;
 
 import io.lumine.mythic.bukkit.MythicBukkit;
-import io.lumine.mythic.core.mobs.ActiveMob;
-import io.lumine.mythic.api.mobs.MythicMob;
-// Removed unused BukkitAdapter import
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-// Fixed imports to match actual package structure
-// import pl.yourserver.petplugin.PetPlugin;
-// import pl.yourserver.petplugin.models.Pet;
-// import pl.yourserver.petplugin.models.PetType;
-// import pl.yourserver.petplugin.utils.TextUtil;
+import org.bukkit.projectiles.ProjectileSource;
 
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 public class EntityDamageListener implements Listener {
+
+    private static final double WOLF_LIFESTEAL_PERCENT = 0.15D;
 
     private final PetPlugin plugin;
 
@@ -31,248 +34,296 @@ public class EntityDamageListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
-        // Protect pets from all damage
         Entity entity = event.getEntity();
-        if (entity.hasMetadata("pet")) {
-            event.setCancelled(true);
-
-            // Additional protection from fire/sunlight
-            if (event.getCause() == EntityDamageEvent.DamageCause.FIRE ||
-                event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK ||
-                event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
-                entity.setFireTicks(0);
-                entity.setVisualFire(false);
-            }
+        if (!isPetEntity(entity)) {
             return;
+        }
+
+        event.setCancelled(true);
+
+        DamageCause cause = event.getCause();
+        if (cause == DamageCause.FIRE || cause == DamageCause.FIRE_TICK || cause == DamageCause.LAVA) {
+            entity.setFireTicks(0);
+            entity.setVisualFire(false);
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        // Protect pets from all damage
-        Entity entity = event.getEntity();
-        if (entity.hasMetadata("pet")) {
-            event.setCancelled(true);
-            return;
-        }
-
-        // Prevent pets from damaging anything
+        Entity victim = event.getEntity();
         Entity damager = event.getDamager();
-        if (damager.hasMetadata("pet")) {
+
+        if (isPetEntity(victim) || isPetEntity(damager)) {
             event.setCancelled(true);
             return;
         }
 
-        // Check if attacker is a player
-        if (damager instanceof Player) {
-            Player attacker = (Player) damager;
+        if (damager instanceof Projectile projectile) {
+            ProjectileSource source = projectile.getShooter();
+            if (source instanceof Entity shooter && isPetEntity(shooter)) {
+                event.setCancelled(true);
+                return;
+            }
+
+            if (source instanceof Player shooter) {
+                handlePlayerAttack(shooter, event);
+            }
+        } else if (damager instanceof Player attacker) {
             handlePlayerAttack(attacker, event);
         }
 
-        // Check if defender is a player
-        if (entity instanceof Player) {
-            Player defender = (Player) entity;
+        if (victim instanceof Player defender) {
             handlePlayerDefense(defender, event);
         }
     }
 
+    private boolean isPetEntity(Entity entity) {
+        return entity != null && entity.hasMetadata("pet");
+    }
+
     private void handlePlayerAttack(Player attacker, EntityDamageByEntityEvent event) {
         List<Pet> activePets = plugin.getPetManager().getActivePets(attacker);
-        if (activePets.isEmpty()) return;
+        if (activePets.isEmpty()) {
+            return;
+        }
 
-        double damageMultiplier = 1.0;
+        double damageMultiplier = 1.0D;
+        double lifestealPercent = 0.0D;
         Entity victim = event.getEntity();
 
         for (Pet pet : activePets) {
             double petMultiplier = pet.getEffectMultiplier();
-
             switch (pet.getType()) {
-                case IRON_GOLEM:
-                    // Check if player has an effect stack
+                case IRON_GOLEM -> {
                     if (plugin.getPetEffectManager().hasEffectStack(attacker)) {
-                        damageMultiplier *= plugin.getConfigManager().getIronGolemDamageMultiplier() * petMultiplier;
+                        double multiplier = plugin.getConfigManager().getIronGolemDamageMultiplier() * petMultiplier;
+                        damageMultiplier *= Math.max(1.0D, multiplier);
                         plugin.getPetEffectManager().useEffectStack(attacker);
 
-                        // PodrzuÄ‚â€žĂ˘â‚¬Ë‡ cel
-                        if (victim instanceof LivingEntity) {
-                            LivingEntity living = (LivingEntity) victim;
-                            living.setVelocity(living.getVelocity().setY(0.5));
+                        if (victim instanceof LivingEntity livingEntity) {
+                            livingEntity.setVelocity(livingEntity.getVelocity().setY(0.5D));
                         }
-
-                        // Power Strike activated - no chat message
                     }
-                        // Launch the target upwards
-
-                case LLAMA:
-                    // ZwiÄ‚â€žĂ˘â€žËkszone obraĂ„Ä…Ă„Ëťenia na moby (nie graczy)
+                }
+                case LLAMA -> {
                     if (!(victim instanceof Player)) {
-                        damageMultiplier *= 1.0 + (plugin.getConfigManager().getLlamaMobDamage() / 100.0 * petMultiplier);
-                    // Increased damage against mobs (not players)
-                    break;
-
-                case WOLF:
-                    // ZwiÄ‚â€žĂ˘â€žËkszone obraĂ„Ä…Ă„Ëťenia PvP
+                        double bonus = plugin.getConfigManager().getLlamaMobDamage() / 100.0D;
+                        damageMultiplier *= 1.0D + (bonus * petMultiplier);
+                    }
+                }
+                case WOLF -> {
                     if (victim instanceof Player) {
-                        damageMultiplier *= 1.0 + (plugin.getConfigManager().getWolfPvpDamage() / 100.0 * petMultiplier);
-                    // Increased PvP damage
-                        // Lifesteal jeĂ„Ä…Ă˘â‚¬Ĺźli ma special effect
+                        double bonus = plugin.getConfigManager().getWolfPvpDamage() / 100.0D;
+                        damageMultiplier *= 1.0D + (bonus * petMultiplier);
+
                         if (pet.hasSpecialEffect()) {
-                            double healAmount = event.getDamage() * 0.15;
-                        // Lifesteal if special ability is active
-                            // Lifesteal - no chat message
+                            lifestealPercent = Math.max(lifestealPercent, WOLF_LIFESTEAL_PERCENT * petMultiplier);
                         }
                     }
-                    break;
-
-                // Dungeon damage bonuses
-                case ZOMBIE:
+                }
+                case ZOMBIE -> {
                     if (isDungeonQ1orQ3(attacker)) {
-                        damageMultiplier *= 1.0 + (plugin.getConfigManager().getDungeonDamageBonus() / 100.0 * petMultiplier);
+                        double bonus = plugin.getConfigManager().getDungeonDamageBonus() / 100.0D;
+                        damageMultiplier *= 1.0D + (bonus * petMultiplier);
                     }
-                    break;
-
-                case SKELETON:
+                }
+                case SKELETON -> {
                     if (isDungeonQ6orQ7(attacker)) {
-                        damageMultiplier *= 1.0 + (plugin.getConfigManager().getDungeonDamageBonus() / 100.0 * petMultiplier);
+                        double bonus = plugin.getConfigManager().getDungeonDamageBonus() / 100.0D;
+                        damageMultiplier *= 1.0D + (bonus * petMultiplier);
                     }
-                    break;
-
-                case SPIDER:
+                }
+                case SPIDER -> {
                     if (isDungeonQ2orQ4(attacker)) {
-                        damageMultiplier *= 1.0 + (plugin.getConfigManager().getDungeonDamageBonus() / 100.0 * petMultiplier);
+                        double bonus = plugin.getConfigManager().getDungeonDamageBonus() / 100.0D;
+                        damageMultiplier *= 1.0D + (bonus * petMultiplier);
                     }
-                    break;
-
-                case CREEPER:
+                }
+                case CREEPER -> {
                     if (isDungeonQ5orQ8(attacker)) {
-                        damageMultiplier *= 1.0 + (plugin.getConfigManager().getDungeonDamageBonus() / 100.0 * petMultiplier);
+                        double bonus = plugin.getConfigManager().getDungeonDamageBonus() / 100.0D;
+                        damageMultiplier *= 1.0D + (bonus * petMultiplier);
                     }
-                    break;
-
-                case SLIME:
+                }
+                case SLIME -> {
                     if (isDungeonQ9orQ10(attacker)) {
-                        damageMultiplier *= 1.0 + (plugin.getConfigManager().getDungeonDamageBonus() / 100.0 * petMultiplier);
+                        double bonus = plugin.getConfigManager().getDungeonDamageBonus() / 100.0D;
+                        damageMultiplier *= 1.0D + (bonus * petMultiplier);
                     }
-                    break;
-
-                case WITHER:
-                    // Increased damage against bosses
+                }
+                case WITHER -> {
                     if (isBoss(victim)) {
-                        damageMultiplier *= 1.0 + (plugin.getConfigManager().getWitherBossDamage() / 100.0 * petMultiplier);
+                        double bonus = plugin.getConfigManager().getWitherBossDamage() / 100.0D;
+                        damageMultiplier *= 1.0D + (bonus * petMultiplier);
 
-                        // Apply wither effect when special ability is active
-                        if (pet.hasSpecialEffect() && victim instanceof LivingEntity) {
-                            LivingEntity boss = (LivingEntity) victim;
-                            boss.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 100, 1));
+                        if (pet.hasSpecialEffect() && victim instanceof LivingEntity livingEntity) {
+                            livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 100, 1));
                         }
                     }
-                    break;
+                }
+                default -> {
+                }
             }
         }
 
-        // Apply modified damage
-        if (damageMultiplier > 1.0) {
-            event.setDamage(event.getDamage() * damageMultiplier);
+        if (damageMultiplier > 1.0D) {
+            double modifiedDamage = event.getDamage() * damageMultiplier;
+            event.setDamage(modifiedDamage);
+
+            if (lifestealPercent > 0.0D) {
+                applyLifesteal(attacker, modifiedDamage * lifestealPercent);
+            }
+        } else if (lifestealPercent > 0.0D) {
+            applyLifesteal(attacker, event.getDamage() * lifestealPercent);
         }
     }
 
     private void handlePlayerDefense(Player defender, EntityDamageByEntityEvent event) {
         List<Pet> activePets = plugin.getPetManager().getActivePets(defender);
-        if (activePets.isEmpty()) return;
+        if (activePets.isEmpty()) {
+            return;
+        }
 
-        double damageReduction = 1.0;
+        double damageMultiplier = 1.0D;
+        Entity damager = event.getDamager();
+
+        if (damager instanceof Projectile projectile && projectile.getShooter() instanceof Entity shooter) {
+            damager = shooter;
+        }
 
         for (Pet pet : activePets) {
-            double petMultiplier = pet.getEffectMultiplier();
-
-            if (pet.getType() == PetType.TURTLE) {
-                // Zmniejszone obraĂ„Ä…Ă„Ëťenia od mobĂ„â€šÄąâ€šw (nie graczy)
-                if (!(event.getDamager() instanceof Player)) {
-                    damageReduction *= 1.0 - (plugin.getConfigManager().getTurtleDamageReduction() / 100.0 * petMultiplier);
-                }
-                // Reduced incoming damage from mobs (not players)
-        }
-
-        // Aplikuj redukcjÄ‚â€žĂ˘â€žË obraĂ„Ä…Ă„ËťeĂ„Ä…Ă˘â‚¬Ĺľ
-        if (damageReduction < 1.0) {
-            event.setDamage(event.getDamage() * damageReduction);
-        }
-        // Apply damage reduction
-
-    // SprawdĂ„Ä…ÄąĹş czy entity jest bossem
-    private boolean isBoss(Entity entity) {
-        if (!(entity instanceof LivingEntity)) return false;
-
-    // Determine if entity is a boss
-        if (entity.getCustomName() != null) {
-            String name = entity.getCustomName();
-        // Check for custom name match
-            // SprawdĂ„Ä…ÄąĹş listÄ‚â€žĂ˘â€žË bossĂ„â€šÄąâ€šw z configu
-            for (String bossName : plugin.getConfigManager().getBossList()) {
-                if (name.contains(bossName)) {
-            // Compare against configured boss list
-                }
+            if (pet.getType() == PetType.TURTLE && !(damager instanceof Player)) {
+                double reduction = plugin.getConfigManager().getTurtleDamageReduction() / 100.0D;
+                double petMultiplier = pet.getEffectMultiplier();
+                damageMultiplier *= Math.max(0.0D, 1.0D - (reduction * petMultiplier));
             }
         }
 
-        // Check MythicMobs integration if available
-        if (plugin.getServer().getPluginManager().isPluginEnabled("MythicMobs")) {
-            try {
-                if (plugin.getConfigManager().hasMythicBosses()) {
-                    Optional<ActiveMob> activeMob = MythicBukkit.inst().getMobManager().getActiveMob(entity.getUniqueId());
-                    if (activeMob.isPresent()) {
-                        MythicMob mythicMob = activeMob.get().getType();
-                        if (mythicMob != null && plugin.getConfigManager().isMythicBoss(mythicMob.getInternalName())) {
-                            return true;
-                        }
-                    }
-                } else if (MythicBukkit.inst().getMobManager().isMythicMob(entity)) {
-        // Fallback: treat vanilla bosses as bosses
-                }
-            } catch (Exception e) {
-                // Ignore MythicMobs API errors
-            }
+        if (damageMultiplier < 1.0D) {
+            event.setDamage(event.getDamage() * damageMultiplier);
         }
-
-    // Dungeon helper methods (placeholder - requires MyDungeonTeleportPlugin integration)
-        switch (entity.getType()) {
-            case ENDER_DRAGON:
-        // Check if player is in Q1 or Q3
-            case ELDER_GUARDIAN:
-            case WARDEN:
-                return true;
-            default:
-                return false;
-        // Check if player is in Q2 or Q4
     }
 
-    // Metody sprawdzajÄ‚â€žĂ˘â‚¬Â¦ce dungeony (placeholder - wymaga integracji z MyDungeonTeleportPlugin)
+    private void applyLifesteal(Player player, double amount) {
+        if (amount <= 0.0D) {
+            return;
+        }
+
+        AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        double maxHealth = attribute != null ? attribute.getValue() : 20.0D;
+        double targetHealth = Math.min(maxHealth, player.getHealth() + amount);
+        player.setHealth(targetHealth);
+    }
+
+    private boolean isBoss(Entity entity) {
+        if (!(entity instanceof LivingEntity livingEntity)) {
+            return false;
+        }
+
+        if (hasConfiguredBossName(livingEntity)) {
+            return true;
+        }
+
+        if (isMythicBoss(livingEntity)) {
+            return true;
+        }
+
+        EntityType type = livingEntity.getType();
+        return type == EntityType.ENDER_DRAGON
+                || type == EntityType.ELDER_GUARDIAN
+                || type == EntityType.WARDEN
+                || type == EntityType.WITHER;
+    }
+
+    private boolean hasConfiguredBossName(LivingEntity entity) {
+        String customName = entity.getCustomName();
+        if (customName == null) {
+            return false;
+        }
+
+        List<String> configuredBosses = plugin.getConfigManager().getBossList();
+        if (configuredBosses.isEmpty()) {
+            return false;
+        }
+
+        String lowerName = customName.toLowerCase(Locale.ROOT);
+        for (String bossName : configuredBosses) {
+            if (bossName != null && lowerName.contains(bossName.toLowerCase(Locale.ROOT))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isMythicBoss(LivingEntity entity) {
+        if (!plugin.getConfigManager().hasMythicBosses()) {
+            return false;
+        }
+
+        if (!plugin.getServer().getPluginManager().isPluginEnabled("MythicMobs")) {
+            return false;
+        }
+
+        try {
+            Object mobManager = MythicBukkit.inst().getMobManager();
+            Method getActiveMob = mobManager.getClass().getMethod("getActiveMob", UUID.class);
+            Object optional = getActiveMob.invoke(mobManager, entity.getUniqueId());
+
+            if (optional instanceof Optional<?> opt && opt.isPresent()) {
+                Object activeMob = opt.get();
+                Method getType = activeMob.getClass().getMethod("getType");
+                Object mythicMob = getType.invoke(activeMob);
+
+                if (mythicMob != null) {
+                    Method getInternalName = mythicMob.getClass().getMethod("getInternalName");
+                    Object internalName = getInternalName.invoke(mythicMob);
+
+                    if (internalName instanceof String name) {
+                        return plugin.getConfigManager().isMythicBoss(name);
+                    }
+                }
+            } else {
+                Method isMythicMob = mobManager.getClass().getMethod("isMythicMob", Entity.class);
+                Object result = isMythicMob.invoke(mobManager, entity);
+                if (result instanceof Boolean bool && bool) {
+                    return plugin.getConfigManager().isMythicBoss(entity.getType().name());
+                }
+            }
+        } catch (Exception ignored) {
+        }
+
+        return false;
+    }
+
     private boolean isDungeonQ1orQ3(Player player) {
-        // TODO: Integracja z MyDungeonTeleportPlugin
-        // Check if player is in Q5 or Q8
-        String worldName = player.getWorld().getName().toLowerCase();
-        return worldName.contains("q1") || worldName.contains("q3");
+        return isPlayerInWorld(player, "q1", "q3");
     }
 
     private boolean isDungeonQ2orQ4(Player player) {
-        // Check if player is in Q6 or Q7
-        return worldName.contains("q2") || worldName.contains("q4");
+        return isPlayerInWorld(player, "q2", "q4");
     }
 
     private boolean isDungeonQ5orQ8(Player player) {
-        String worldName = player.getWorld().getName().toLowerCase();
-        // Check if player is in Q9 or Q10
+        return isPlayerInWorld(player, "q5", "q8");
     }
 
     private boolean isDungeonQ6orQ7(Player player) {
-        String worldName = player.getWorld().getName().toLowerCase();
-        return worldName.contains("q6") || worldName.contains("q7");
+        return isPlayerInWorld(player, "q6", "q7");
     }
 
     private boolean isDungeonQ9orQ10(Player player) {
-        String worldName = player.getWorld().getName().toLowerCase();
-        return worldName.contains("q9") || worldName.contains("q10");
+        return isPlayerInWorld(player, "q9", "q10");
+    }
+
+    private boolean isPlayerInWorld(Player player, String... markers) {
+        String worldName = player.getWorld().getName().toLowerCase(Locale.ROOT);
+        for (String marker : markers) {
+            if (worldName.contains(marker.toLowerCase(Locale.ROOT))) {
+                return true;
+            }
+        }
+        return false;
     }
 }
