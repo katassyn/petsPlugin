@@ -1,6 +1,7 @@
 package pl.yourserver;
 
 import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythic.core.mobs.ActiveMob;
 import io.lumine.mythic.api.mobs.MythicMob;
 // Removed unused BukkitAdapter import
 import org.bukkit.entity.Entity;
@@ -20,6 +21,7 @@ import org.bukkit.potion.PotionEffectType;
 // import pl.yourserver.petplugin.utils.TextUtil;
 
 import java.util.List;
+import java.util.Optional;
 
 public class EntityDamageListener implements Listener {
 
@@ -63,13 +65,13 @@ public class EntityDamageListener implements Listener {
             return;
         }
 
-        // Sprawdź czy atakujący to gracz
+        // Check if attacker is a player
         if (damager instanceof Player) {
             Player attacker = (Player) damager;
             handlePlayerAttack(attacker, event);
         }
 
-        // Sprawdź czy obrońca to gracz
+        // Check if defender is a player
         if (entity instanceof Player) {
             Player defender = (Player) entity;
             handlePlayerDefense(defender, event);
@@ -88,12 +90,12 @@ public class EntityDamageListener implements Listener {
 
             switch (pet.getType()) {
                 case IRON_GOLEM:
-                    // Sprawdź czy gracz ma stack efektu
+                    // Check if player has an effect stack
                     if (plugin.getPetEffectManager().hasEffectStack(attacker)) {
                         damageMultiplier *= plugin.getConfigManager().getIronGolemDamageMultiplier() * petMultiplier;
                         plugin.getPetEffectManager().useEffectStack(attacker);
 
-                        // Podrzuć cel
+                        // PodrzuÄ‚â€žĂ˘â‚¬Ë‡ cel
                         if (victim instanceof LivingEntity) {
                             LivingEntity living = (LivingEntity) victim;
                             living.setVelocity(living.getVelocity().setY(0.5));
@@ -101,24 +103,24 @@ public class EntityDamageListener implements Listener {
 
                         // Power Strike activated - no chat message
                     }
-                    break;
+                        // Launch the target upwards
 
                 case LLAMA:
-                    // Zwiększone obrażenia na moby (nie graczy)
+                    // ZwiÄ‚â€žĂ˘â€žËkszone obraĂ„Ä…Ă„Ëťenia na moby (nie graczy)
                     if (!(victim instanceof Player)) {
                         damageMultiplier *= 1.0 + (plugin.getConfigManager().getLlamaMobDamage() / 100.0 * petMultiplier);
-                    }
+                    // Increased damage against mobs (not players)
                     break;
 
                 case WOLF:
-                    // Zwiększone obrażenia PvP
+                    // ZwiÄ‚â€žĂ˘â€žËkszone obraĂ„Ä…Ă„Ëťenia PvP
                     if (victim instanceof Player) {
                         damageMultiplier *= 1.0 + (plugin.getConfigManager().getWolfPvpDamage() / 100.0 * petMultiplier);
-
-                        // Lifesteal jeśli ma special effect
+                    // Increased PvP damage
+                        // Lifesteal jeĂ„Ä…Ă˘â‚¬Ĺźli ma special effect
                         if (pet.hasSpecialEffect()) {
                             double healAmount = event.getDamage() * 0.15;
-                            attacker.setHealth(Math.min(attacker.getHealth() + healAmount, attacker.getMaxHealth()));
+                        // Lifesteal if special ability is active
                             // Lifesteal - no chat message
                         }
                     }
@@ -156,11 +158,11 @@ public class EntityDamageListener implements Listener {
                     break;
 
                 case WITHER:
-                    // Zwiększone obrażenia na bossy
+                    // Increased damage against bosses
                     if (isBoss(victim)) {
                         damageMultiplier *= 1.0 + (plugin.getConfigManager().getWitherBossDamage() / 100.0 * petMultiplier);
 
-                        // Wither effect jeśli ma special effect
+                        // Apply wither effect when special ability is active
                         if (pet.hasSpecialEffect() && victim instanceof LivingEntity) {
                             LivingEntity boss = (LivingEntity) victim;
                             boss.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 100, 1));
@@ -170,7 +172,7 @@ public class EntityDamageListener implements Listener {
             }
         }
 
-        // Aplikuj zmodyfikowane obrażenia
+        // Apply modified damage
         if (damageMultiplier > 1.0) {
             event.setDamage(event.getDamage() * damageMultiplier);
         }
@@ -186,72 +188,82 @@ public class EntityDamageListener implements Listener {
             double petMultiplier = pet.getEffectMultiplier();
 
             if (pet.getType() == PetType.TURTLE) {
-                // Zmniejszone obrażenia od mobów (nie graczy)
+                // Zmniejszone obraĂ„Ä…Ă„Ëťenia od mobĂ„â€šÄąâ€šw (nie graczy)
                 if (!(event.getDamager() instanceof Player)) {
                     damageReduction *= 1.0 - (plugin.getConfigManager().getTurtleDamageReduction() / 100.0 * petMultiplier);
                 }
-            }
+                // Reduced incoming damage from mobs (not players)
         }
 
-        // Aplikuj redukcję obrażeń
+        // Aplikuj redukcjÄ‚â€žĂ˘â€žË obraĂ„Ä…Ă„ËťeĂ„Ä…Ă˘â‚¬Ĺľ
         if (damageReduction < 1.0) {
             event.setDamage(event.getDamage() * damageReduction);
         }
-    }
+        // Apply damage reduction
 
-    // Sprawdź czy entity jest bossem
+    // SprawdĂ„Ä…ÄąĹş czy entity jest bossem
     private boolean isBoss(Entity entity) {
         if (!(entity instanceof LivingEntity)) return false;
 
-        // Sprawdź custom name
+    // Determine if entity is a boss
         if (entity.getCustomName() != null) {
             String name = entity.getCustomName();
-
-            // Sprawdź listę bossów z configu
+        // Check for custom name match
+            // SprawdĂ„Ä…ÄąĹş listÄ‚â€žĂ˘â€žË bossĂ„â€šÄąâ€šw z configu
             for (String bossName : plugin.getConfigManager().getBossList()) {
                 if (name.contains(bossName)) {
-                    return true;
+            // Compare against configured boss list
                 }
             }
         }
 
-        // Sprawdź MythicMobs jeśli dostępny
+        // Check MythicMobs integration if available
         if (plugin.getServer().getPluginManager().isPluginEnabled("MythicMobs")) {
             try {
-                return MythicBukkit.inst().getMobManager().isMythicMob(entity);
+                if (plugin.getConfigManager().hasMythicBosses()) {
+                    Optional<ActiveMob> activeMob = MythicBukkit.inst().getMobManager().getActiveMob(entity.getUniqueId());
+                    if (activeMob.isPresent()) {
+                        MythicMob mythicMob = activeMob.get().getType();
+                        if (mythicMob != null && plugin.getConfigManager().isMythicBoss(mythicMob.getInternalName())) {
+                            return true;
+                        }
+                    }
+                } else if (MythicBukkit.inst().getMobManager().isMythicMob(entity)) {
+        // Fallback: treat vanilla bosses as bosses
+                }
             } catch (Exception e) {
-                // Ignore
+                // Ignore MythicMobs API errors
             }
         }
 
-        // Sprawdź czy to vanilla boss
+    // Dungeon helper methods (placeholder - requires MyDungeonTeleportPlugin integration)
         switch (entity.getType()) {
             case ENDER_DRAGON:
-            case WITHER:
+        // Check if player is in Q1 or Q3
             case ELDER_GUARDIAN:
             case WARDEN:
                 return true;
             default:
                 return false;
-        }
+        // Check if player is in Q2 or Q4
     }
 
-    // Metody sprawdzające dungeony (placeholder - wymaga integracji z MyDungeonTeleportPlugin)
+    // Metody sprawdzajÄ‚â€žĂ˘â‚¬Â¦ce dungeony (placeholder - wymaga integracji z MyDungeonTeleportPlugin)
     private boolean isDungeonQ1orQ3(Player player) {
         // TODO: Integracja z MyDungeonTeleportPlugin
-        // Sprawdź czy gracz jest w Q1 lub Q3
+        // Check if player is in Q5 or Q8
         String worldName = player.getWorld().getName().toLowerCase();
         return worldName.contains("q1") || worldName.contains("q3");
     }
 
     private boolean isDungeonQ2orQ4(Player player) {
-        String worldName = player.getWorld().getName().toLowerCase();
+        // Check if player is in Q6 or Q7
         return worldName.contains("q2") || worldName.contains("q4");
     }
 
     private boolean isDungeonQ5orQ8(Player player) {
         String worldName = player.getWorld().getName().toLowerCase();
-        return worldName.contains("q5") || worldName.contains("q8");
+        // Check if player is in Q9 or Q10
     }
 
     private boolean isDungeonQ6orQ7(Player player) {

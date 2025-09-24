@@ -191,15 +191,99 @@ milestones:
   level-75-bonus: 0.45
   level-100-bonus: 0.60
 
-# Boss list for Wither pet
-# Add MythicMobs boss names here
+# Boss detection configuration for Wither pet
 bosses:
-  - "SkeletalKnight"
-  - "SkeletonKing"
-  - "AngrySludge"
-  - "StormKing"
-  - "NetherLord"
-  # Add more boss names from MythicMobs
+  # Substrings that should match boss display names (legacy support)
+  custom-names:
+    - "SkeletalKnight"
+    - "SkeletonKing"
+    - "AngrySludge"
+    - "StormKing"
+    - "NetherLord"
+  # MythicMob internal names flagged as bosses with their xp-per-mob values
+  mythic-mobs:
+    grimmag_inf:
+      xp-per-mob: 60000
+    grimmag_hell:
+      xp-per-mob: 180000
+    grimmag_blood:
+      xp-per-mob: 600000
+    arachna_scourge_of_duria_inf:
+      xp-per-mob: 65000
+    arachna_scourge_of_duria_hell:
+      xp-per-mob: 190000
+    arachna_scourge_of_duria_blood:
+      xp-per-mob: 650000
+    undead_parallel_world_king_heredur_inf:
+      xp-per-mob: 70000
+    undead_parallel_world_king_heredur_hell:
+      xp-per-mob: 200000
+    undead_parallel_world_king_heredur_blood:
+      xp-per-mob: 700000
+    bearach_champion_of_wilds_inf:
+      xp-per-mob: 75000
+    bearach_champion_of_wilds_hell:
+      xp-per-mob: 210000
+    bearach_champion_of_wilds_blood:
+      xp-per-mob: 750000
+    khalys_leader_of_cultists_inf:
+      xp-per-mob: 80000
+    khalys_leader_of_cultists_hell:
+      xp-per-mob: 220000
+    khalys_leader_of_cultists_blood:
+      xp-per-mob: 800000
+    skeledragon_phase1_inf:
+      xp-per-mob: 29000
+    skeledragon_phase2_inf:
+      xp-per-mob: 29000
+    mortis_phase3_inf:
+      xp-per-mob: 29000
+    skeledragon_phase1_hell:
+      xp-per-mob: 77000
+    skeledragon_phase2_hell:
+      xp-per-mob: 77000
+    mortis_phase3_hell:
+      xp-per-mob: 77000
+    skeledragon_phase1_blood:
+      xp-per-mob: 280000
+    skeledragon_phase2_blood:
+      xp-per-mob: 280000
+    mortis_phase3_blood:
+      xp-per-mob: 280000
+    herald_of_anderworld_inf:
+      xp-per-mob: 90000
+    herald_of_anderworld_hell:
+      xp-per-mob: 240000
+    herald_of_anderworld_blood:
+      xp-per-mob: 880000
+    sigrismarr_priest_of_fjalnir_inf:
+      xp-per-mob: 95000
+    sigrismarr_priest_of_fjalnir_hell:
+      xp-per-mob: 250000
+    sigrismarr_priest_of_fjalnir_blood:
+      xp-per-mob: 920000
+    medusa_inf:
+      xp-per-mob: 100000
+    medusa_hell:
+      xp-per-mob: 260000
+    medusa_blood:
+      xp-per-mob: 960000
+    parallel_world_gorga_inf:
+      xp-per-mob: 110000
+    parallel_world_gorga_hell:
+      xp-per-mob: 280000
+    parallel_world_gorga_blood:
+      xp-per-mob: 1000000
+    umbraxis_shadowlord:
+      xp-per-mob: 120000
+    poseidon_sea_lord:
+      xp-per-mob: 130000
+    zeus_king_of_gods:
+      xp-per-mob: 360000
+    daedalus_master_architect:
+      xp-per-mob: 1200000
+    hades_lord_of_underworld:
+      xp-per-mob: 2000000
 
 # Integration settings
 integrations:

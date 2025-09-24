@@ -7,8 +7,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ConfigManager {
@@ -57,15 +60,16 @@ public class ConfigManager {
     private double giantMythicChance;
     private double ironGolemDamageMultiplier;
 
-    // Boss list
-    private List<String> bossList;
+    // Boss detection configuration
+    private List<String> bossList = new ArrayList<>();
+    private Map<String, Integer> mythicBossXp = new HashMap<>();
 
     public ConfigManager(PetPlugin plugin) {
         this.plugin = plugin;
     }
 
     public void loadConfigs() {
-        // Główny config
+        // Main config
         config = plugin.getConfig();
 
         // Custom pets config
@@ -104,8 +108,41 @@ public class ConfigManager {
 
         // All effect values now come from pets.yml, not config.yml
 
-        // Boss list
-        bossList = config.getStringList("bosses");
+        // Boss configuration
+        loadBossConfiguration();
+    }
+
+    private void loadBossConfiguration() {
+        bossList = new ArrayList<>();
+        mythicBossXp = new HashMap<>();
+
+        if (config.isList("bosses")) {
+            bossList.addAll(config.getStringList("bosses"));
+            return;
+        }
+
+        ConfigurationSection bossSection = config.getConfigurationSection("bosses");
+        if (bossSection == null) {
+            return;
+        }
+
+        List<String> customNames = bossSection.getStringList("custom-names");
+        if (customNames == null || customNames.isEmpty()) {
+            customNames = bossSection.getStringList("display-names");
+        }
+        if (customNames != null && !customNames.isEmpty()) {
+            bossList.addAll(customNames);
+        }
+
+        ConfigurationSection mythicSection = bossSection.getConfigurationSection("mythic-mobs");
+        if (mythicSection != null) {
+            for (String key : mythicSection.getKeys(false)) {
+                String lowered = key.toLowerCase(Locale.ROOT);
+                ConfigurationSection mobSection = mythicSection.getConfigurationSection(key);
+                int xpPerMob = mobSection != null ? mobSection.getInt("xp-per-mob", 0) : mythicSection.getInt(key, 0);
+                mythicBossXp.put(lowered, xpPerMob);
+            }
+        }
     }
 
     public void reload() {
@@ -124,7 +161,7 @@ public class ConfigManager {
         }
     }
 
-    // Gettery dla wszystkich wartości
+    // Getters
     public boolean isDebug() {
         return debug;
     }
@@ -259,6 +296,24 @@ public class ConfigManager {
 
     public List<String> getBossList() {
         return bossList;
+    }
+
+    public boolean isMythicBoss(String internalName) {
+        if (internalName == null) {
+            return false;
+        }
+        return mythicBossXp.containsKey(internalName.toLowerCase(Locale.ROOT));
+    }
+
+    public int getMythicBossXp(String internalName) {
+        if (internalName == null) {
+            return 0;
+        }
+        return mythicBossXp.getOrDefault(internalName.toLowerCase(Locale.ROOT), 0);
+    }
+
+    public boolean hasMythicBosses() {
+        return !mythicBossXp.isEmpty();
     }
 
     // Messages
