@@ -397,6 +397,7 @@ public class PetCommand implements CommandExecutor, TabCompleter {
         }
 
         plugin.getConfigManager().reload();
+        plugin.getHeadManager().reload();
         sender.sendMessage(TextUtil.colorize("&aConfiguration reloaded!"));
     }
 

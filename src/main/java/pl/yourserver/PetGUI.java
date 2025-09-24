@@ -164,20 +164,15 @@ public class PetGUI {
             lore.add(TextUtil.colorize("&c⚠ Needs feeding!"));
         }
 
-        // Always use player heads with custom textures for all pets
-        ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD)
+        ItemStack baseHead = plugin.getHeadManager().getPetHead(pet.getType());
+        ItemBuilder builder = baseHead != null
+                ? new ItemBuilder(baseHead)
+                : new ItemBuilder(Material.PLAYER_HEAD);
+
+        return builder
                 .setName(TextUtil.colorize(pet.getRarity().getColor() + pet.getType().getDisplayName()))
-                .setLore(lore);
-
-        // Try to set skull texture, fallback to default if it fails
-        try {
-            builder.setSkullTexture(pet.getType().getSkullTexture());
-        } catch (Exception e) {
-            // Fallback to default player head if texture setting fails
-            plugin.getLogger().warning("Failed to set skull texture for pet " + pet.getType().name() + ": " + e.getMessage());
-        }
-
-        return builder.build();
+                .setLore(lore)
+                .build();
     }
 
     // Get appropriate material for pet head as fallback
@@ -268,20 +263,15 @@ public class PetGUI {
             lore.add(TextUtil.colorize("&7Andermant needed: &5" + pet.getRequiredFeedAmount()));
         }
 
-        // Always use player heads with custom textures for all pets
-        ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD)
+        ItemStack baseHead = plugin.getHeadManager().getPetHead(pet.getType());
+        ItemBuilder builder = baseHead != null
+                ? new ItemBuilder(baseHead)
+                : new ItemBuilder(Material.PLAYER_HEAD);
+
+        return builder
                 .setName(TextUtil.colorize(pet.getRarity().getColor() + "&l" + pet.getType().getDisplayName()))
-                .setLore(lore);
-
-        // Try to set skull texture, fallback to default if it fails
-        try {
-            builder.setSkullTexture(pet.getType().getSkullTexture());
-        } catch (Exception e) {
-            // Fallback to default player head if texture setting fails
-            plugin.getLogger().warning("Failed to set skull texture for detailed pet " + pet.getType().name() + ": " + e.getMessage());
-        }
-
-        return builder.build();
+                .setLore(lore)
+                .build();
     }
 
     // Stwórz pasek doświadczenia

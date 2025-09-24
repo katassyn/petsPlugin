@@ -121,11 +121,10 @@ public class PetBlockListener implements Listener {
         lore.add("");
         lore.add(TextUtil.colorize("&eRight-click to add to your pets!"));
 
-        // Always use player heads with custom textures for all pets
-        ItemStack item = new ItemBuilder(Material.PLAYER_HEAD)
+        ItemStack baseHead = petDropManager.getPlugin().getHeadManager().getPetHead(pet.getType());
+        ItemStack item = (baseHead != null ? new ItemBuilder(baseHead) : new ItemBuilder(Material.PLAYER_HEAD))
                 .setName(TextUtil.colorize(pet.getRarity().getColor() + pet.getType().getDisplayName()))
                 .setLore(lore)
-                .setSkullTexture(pet.getType().getSkullTexture())
                 .build();
 
         // Add NBT data for identification

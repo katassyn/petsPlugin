@@ -1,7 +1,11 @@
 package pl.yourserver;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Level;
 // Fixed imports to match actual package structure
 // import pl.yourserver.petplugin.commands.PetCommand;
 // import pl.yourserver.petplugin.config.ConfigManager;
@@ -31,6 +35,7 @@ public class PetPlugin extends JavaPlugin {
     private PetCombatManager petCombatManager;
     private PetDropManager petDropManager;
     private PetFollowTask petFollowTask;
+    private HeadManager headManager;
 
     @Override
     public void onEnable() {
@@ -40,6 +45,9 @@ public class PetPlugin extends JavaPlugin {
         saveDefaultConfig();
         configManager = new ConfigManager(this);
         configManager.loadConfigs();
+
+        headManager = new HeadManager(this);
+        headManager.initialize();
 
         // Inicjalizacja bazy danych
         databaseManager = new DatabaseManager(this);
@@ -195,6 +203,10 @@ public class PetPlugin extends JavaPlugin {
         return petFollowTask;
     }
 
+    public HeadManager getHeadManager() {
+        return headManager;
+    }
+
     public org.bukkit.NamespacedKey getNamespacedKey(String key) {
         return new org.bukkit.NamespacedKey(this, key);
     }
@@ -202,30 +214,34 @@ public class PetPlugin extends JavaPlugin {
     public void debugPetTextures(org.bukkit.entity.Player player) {
         getLogger().info("=== Pet Textures Debug ===");
 
-        for (PetType petType : PetType.values()) {
-            String texture = petType.getSkullTexture();
-            getLogger().info(petType.name() + " texture length: " + texture.length());
+        getLogger().info("HeadDatabase available: " + headManager.isHeadDatabaseAvailable());
 
-            try {
-                java.util.Base64.getDecoder().decode(texture);
-                getLogger().info(petType.name() + " - Valid base64: YES");
-            } catch (Exception e) {
-                getLogger().warning(petType.name() + " - Valid base64: NO - " + e.getMessage());
+        for (PetType petType : PetType.values()) {
+            String configuredId = configManager.getHeadDatabaseId(petType);
+            if (configuredId == null || configuredId.isEmpty()) {
+                getLogger().info(petType.name() + " - HeadDatabase ID: <not configured>");
+            } else {
+                getLogger().info(petType.name() + " - HeadDatabase ID: " + configuredId);
             }
 
             try {
-                org.bukkit.inventory.ItemStack testItem = new ItemBuilder(org.bukkit.Material.PLAYER_HEAD)
-                    .setName("&aTest: " + petType.name())
-                    .setSkullTexture(texture)
-                    .build();
-
-                if (testItem != null && testItem.hasItemMeta()) {
-                    getLogger().info(petType.name() + " - Item created successfully");
+                ItemStack headItem = headManager.getPetHead(petType);
+                if (headItem != null && headItem.getType() == Material.PLAYER_HEAD && headItem.hasItemMeta()) {
+                    getLogger().info(petType.name() + " - Head item generated successfully.");
+                } else if (headItem != null) {
+                    getLogger().warning(petType.name() + " - Head item generated with unexpected material: " + headItem.getType());
                 } else {
-                    getLogger().warning(petType.name() + " - Item creation failed: null or no meta");
+                    getLogger().warning(petType.name() + " - Head item generation returned null.");
                 }
-            } catch (Exception e) {
-                getLogger().warning(petType.name() + " - Failed to create item: " + e.getMessage());
+            } catch (Exception exception) {
+                getLogger().log(Level.WARNING, petType.name() + " - Exception while generating head item", exception);
+            }
+
+            String texture = petType.getSkullTexture();
+            if (texture != null && !texture.isEmpty()) {
+                getLogger().info(petType.name() + " - Fallback texture length: " + texture.length());
+            } else {
+                getLogger().info(petType.name() + " - No fallback texture configured.");
             }
         }
 
