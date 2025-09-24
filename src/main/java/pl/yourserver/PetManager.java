@@ -24,6 +24,7 @@ public class PetManager {
     private final Map<UUID, Pet> activePets;
     private final Map<UUID, List<Pet>> playerPets;
     private final LibsDisguisesHook libsDisguisesHook;
+    private static final double DISGUISED_WOLF_SPEED = 0.42D;
 
     public PetManager(PetPlugin plugin) {
         this.plugin = plugin;
@@ -38,29 +39,35 @@ public class PetManager {
             return;
         }
 
+        if (!isLibsDisguisesEnabled()) {
+            TextUtil.sendMessage(owner, "&cAktywne pety wymagają zainstalowanego &eLibsDisguises&c.");
+            plugin.getLogger().warning("Skipping pet spawn for " + owner.getName() + " because LibsDisguises is not available.");
+            return;
+        }
+
         // Despawn poprzedniego peta jeśli istnieje
         despawnPet(owner);
 
         Location spawnLoc = owner.getLocation().add(1, 0, 1);
-        Entity entity;
-        boolean disguised = false;
+        Entity entity = spawnWolfBase(owner, spawnLoc);
 
-        if (isLibsDisguisesEnabled()) {
-            entity = spawnWolfBase(owner, spawnLoc);
-            disguised = entity != null;
-        } else {
-            entity = spawnLegacyPet(owner, pet, spawnLoc);
-        }
-
-        if (entity == null) {
+        if (!(entity instanceof Wolf)) {
+            plugin.getLogger().warning("Failed to spawn disguised wolf for pet " + pet.getType().name());
+            TextUtil.sendMessage(owner, "&cNie udało się stworzyć peta. Skontaktuj się z administracją.");
             return;
         }
 
         configurePetEntity(owner, pet, entity);
 
-        if (disguised) {
-            libsDisguisesHook.applyDisguise(entity, pet);
+        if (!libsDisguisesHook.applyDisguise(entity, pet)) {
+            plugin.getLogger().warning("Failed to apply LibsDisguises disguise for pet " + pet.getType().name());
+            entity.remove();
+            TextUtil.sendMessage(owner, "&cNie udało się przebrać peta &e" + pet.getType().getDisplayName() + "&c.");
+            return;
         }
+
+        pet.setEntity(entity);
+        activePets.put(owner.getUniqueId(), pet);
     }
 
     // Despawn peta
@@ -92,40 +99,19 @@ public class PetManager {
             wolf.setSitting(false);
             wolf.setAngry(false);
             wolf.setAdult();
+            wolf.setAgeLock(true);
             wolf.setAware(true);
             wolf.setCanPickupItems(false);
             try {
                 if (wolf.getAttribute(Attribute.GENERIC_FOLLOW_RANGE) != null) {
                     wolf.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(48.0);
                 }
+                if (wolf.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED) != null) {
+                    wolf.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(DISGUISED_WOLF_SPEED);
+                }
             } catch (Exception ignored) {
             }
         }
-        return entity;
-    }
-
-    private Entity spawnLegacyPet(Player owner, Pet pet, Location spawnLoc) {
-        EntityType entityType = pet.getType().getEntityType();
-
-        if (entityType == EntityType.GIANT) {
-            entityType = EntityType.ZOMBIE;
-        }
-
-        Entity entity = owner.getWorld().spawnEntity(spawnLoc, entityType);
-
-        if (entity instanceof Ageable ageable) {
-            ageable.setBaby();
-            ageable.setAgeLock(true);
-        } else if (entity instanceof Zombie zombie) {
-            if (pet.getType() == PetType.ZOMBIE) {
-                zombie.setBaby(true);
-            }
-        } else if (entity instanceof Slime slime) {
-            slime.setSize(1);
-        } else if (entity instanceof Phantom phantom) {
-            phantom.setSize(1);
-        }
-
         return entity;
     }
 
@@ -149,7 +135,7 @@ public class PetManager {
 
             try {
                 if (living.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED) != null) {
-                    living.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3);
+                    living.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(DISGUISED_WOLF_SPEED);
                 }
             } catch (Exception ignored) {
             }
@@ -172,9 +158,6 @@ public class PetManager {
                 living.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1, false, false));
             }
         }
-
-        pet.setEntity(entity);
-        activePets.put(owner.getUniqueId(), pet);
     }
 
     private boolean isLibsDisguisesEnabled() {
@@ -188,6 +171,11 @@ public class PetManager {
             pet.setActive(false);
             despawnPet(owner);
         } else {
+            if (!isLibsDisguisesEnabled()) {
+                TextUtil.sendMessage(owner, "&cAktywne pety wymagają zainstalowanego &eLibsDisguises&c.");
+                return;
+            }
+
             // Sprawdź limit petów - uwzględnij sloty które da aktywowany pet
             int activeCount = getActivePetCount(owner);
             int currentMaxPets = getMaxPetSlots(owner);
@@ -222,6 +210,10 @@ public class PetManager {
             // Aktywuj peta
             pet.setActive(true);
             spawnPet(owner, pet);
+
+            if (pet.getEntity() == null) {
+                pet.setActive(false);
+            }
         }
     }
 

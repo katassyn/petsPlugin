@@ -250,6 +250,7 @@ public class IntegrationManager extends PlaceholderExpansion {
                 // UNIQUE Pets
                 case WOLF:
                     values.put("wolf_pvp_damage", plugin.getConfigManager().getWolfPvpDamage() * multiplier);
+                    values.put("wolf_pvp_damage_reduction", plugin.getConfigManager().getWolfPvpDamage() * multiplier);
                     if (pet.hasSpecialEffect()) {
                         values.put("wolf_pvp_lifesteal", 0.15);
                     }

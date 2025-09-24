@@ -14,21 +14,27 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Map;
 import java.util.UUID;
 
 public class EntityDamageListener implements Listener {
 
     private static final double WOLF_LIFESTEAL_PERCENT = 0.15D;
+    private static final String WITHER_DOT_METADATA = "pet_wither_dot_expiry";
 
     private final PetPlugin plugin;
+    private final Map<UUID, BukkitTask> witherDotTasks = new HashMap<>();
 
     public EntityDamageListener(PetPlugin plugin) {
         this.plugin = plugin;
@@ -159,7 +165,7 @@ public class EntityDamageListener implements Listener {
                         damageMultiplier *= 1.0D + (bonus * petMultiplier);
 
                         if (pet.hasSpecialEffect() && victim instanceof LivingEntity livingEntity) {
-                            livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 100, 1));
+                            applyWitherSpecial(attacker, livingEntity);
                         }
                     }
                 }
@@ -198,12 +204,76 @@ public class EntityDamageListener implements Listener {
                 double reduction = plugin.getConfigManager().getTurtleDamageReduction() / 100.0D;
                 double petMultiplier = pet.getEffectMultiplier();
                 damageMultiplier *= Math.max(0.0D, 1.0D - (reduction * petMultiplier));
+            } else if (pet.getType() == PetType.WOLF && damager instanceof Player) {
+                double reduction = plugin.getConfigManager().getWolfPvpDamage() / 100.0D;
+                double petMultiplier = pet.getEffectMultiplier();
+                damageMultiplier *= Math.max(0.0D, 1.0D - (reduction * petMultiplier));
             }
         }
 
         if (damageMultiplier < 1.0D) {
             event.setDamage(event.getDamage() * damageMultiplier);
         }
+    }
+
+    private void applyWitherSpecial(Player attacker, LivingEntity target) {
+        if (target instanceof Player) {
+            return;
+        }
+
+        double damagePerSecond = plugin.getConfigManager().getWitherSpecialDamage();
+        int durationSeconds = plugin.getConfigManager().getWitherSpecialDuration();
+        if (damagePerSecond <= 0.0D || durationSeconds <= 0) {
+            return;
+        }
+
+        long expiryTime = System.currentTimeMillis() + (durationSeconds * 1000L);
+        target.setMetadata(WITHER_DOT_METADATA, new FixedMetadataValue(plugin, expiryTime));
+
+        BukkitTask existingTask = witherDotTasks.remove(target.getUniqueId());
+        if (existingTask != null) {
+            existingTask.cancel();
+        }
+
+        BukkitRunnable task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!target.isValid() || target.isDead()) {
+                    clear();
+                    return;
+                }
+
+                long currentExpiry = getWitherExpiry(target);
+                if (currentExpiry <= System.currentTimeMillis()) {
+                    clear();
+                    return;
+                }
+
+                target.damage(damagePerSecond, attacker);
+            }
+
+            private void clear() {
+                cancel();
+                witherDotTasks.remove(target.getUniqueId());
+                target.removeMetadata(WITHER_DOT_METADATA, plugin);
+            }
+        };
+
+        witherDotTasks.put(target.getUniqueId(), task.runTaskTimer(plugin, 0L, 20L));
+    }
+
+    private long getWitherExpiry(LivingEntity entity) {
+        if (!entity.hasMetadata(WITHER_DOT_METADATA)) {
+            return 0L;
+        }
+
+        for (MetadataValue value : entity.getMetadata(WITHER_DOT_METADATA)) {
+            if (value.getOwningPlugin() == plugin) {
+                return value.asLong();
+            }
+        }
+
+        return 0L;
     }
 
     private void applyLifesteal(Player player, double amount) {

@@ -6,6 +6,7 @@ import org.bukkit.entity.EntityType;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.EnumSet;
 import java.util.logging.Level;
 
 /**
@@ -15,6 +16,18 @@ import java.util.logging.Level;
 public class LibsDisguisesHook {
 
     private final PetPlugin plugin;
+
+    private static final EnumSet<PetType> BABY_DISGUISES = EnumSet.of(
+            PetType.COW,
+            PetType.PIG,
+            PetType.SHEEP,
+            PetType.CHICKEN,
+            PetType.DONKEY,
+            PetType.LLAMA,
+            PetType.TURTLE,
+            PetType.MOOSHROOM,
+            PetType.PANDA
+    );
 
     private boolean attemptedInitialization;
     private boolean available;
@@ -31,6 +44,8 @@ public class LibsDisguisesHook {
     private Method getWatcherMethod;
     private Method watcherSetCustomNameMethod;
     private Method watcherSetCustomNameVisibleMethod;
+    private Method flagWatcherSetYModifierMethod;
+    private Method flagWatcherSetNameYModifierMethod;
     private Method disguiseEntityMethod;
     private Method isDisguisedMethod;
     private Method undisguiseToAllMethod;
@@ -46,6 +61,9 @@ public class LibsDisguisesHook {
 
     private Class<?> phantomWatcherClass;
     private Method phantomSetSizeMethod;
+
+    private Class<?> enderDragonWatcherClass;
+    private Method enderDragonSetPhaseMethod;
 
     public LibsDisguisesHook(PetPlugin plugin) {
         this.plugin = plugin;
@@ -107,18 +125,7 @@ public class LibsDisguisesHook {
                 invokeOptional(watcherSetCustomNameMethod, watcher, entity.getCustomName());
                 invokeOptional(watcherSetCustomNameVisibleMethod, watcher, entity.isCustomNameVisible());
 
-                if (ageableWatcherClass != null && ageableWatcherClass.isInstance(watcher)) {
-                    invokeOptional(ageableSetBabyMethod, watcher, Boolean.TRUE);
-                }
-                if (zombieWatcherClass != null && zombieWatcherClass.isInstance(watcher) && pet.getType() == PetType.ZOMBIE) {
-                    invokeOptional(zombieSetBabyMethod, watcher, Boolean.TRUE);
-                }
-                if (slimeWatcherClass != null && slimeWatcherClass.isInstance(watcher)) {
-                    invokeOptional(slimeSetSizeMethod, watcher, 1);
-                }
-                if (phantomWatcherClass != null && phantomWatcherClass.isInstance(watcher)) {
-                    invokeOptional(phantomSetSizeMethod, watcher, 1);
-                }
+                applyWatcherTweaks(pet, watcher);
             }
 
             disguiseEntityMethod.invoke(null, entity, disguise);
@@ -167,6 +174,8 @@ public class LibsDisguisesHook {
             getWatcherMethod = findMethod(mobDisguiseClass, "getWatcher");
             watcherSetCustomNameMethod = findMethod(flagWatcherClass, "setCustomName", String.class);
             watcherSetCustomNameVisibleMethod = findMethod(flagWatcherClass, "setCustomNameVisible", boolean.class);
+            flagWatcherSetYModifierMethod = findMethod(flagWatcherClass, "setYModifier", float.class);
+            flagWatcherSetNameYModifierMethod = findMethod(flagWatcherClass, "setNameYModifier", float.class);
 
             ageableWatcherClass = findClass("me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher");
             if (ageableWatcherClass != null) {
@@ -186,6 +195,11 @@ public class LibsDisguisesHook {
             phantomWatcherClass = findClass("me.libraryaddict.disguise.disguisetypes.watchers.PhantomWatcher");
             if (phantomWatcherClass != null) {
                 phantomSetSizeMethod = findMethod(phantomWatcherClass, "setSize", int.class);
+            }
+
+            enderDragonWatcherClass = findClass("me.libraryaddict.disguise.disguisetypes.watchers.EnderDragonWatcher");
+            if (enderDragonWatcherClass != null) {
+                enderDragonSetPhaseMethod = findMethod(enderDragonWatcherClass, "setPhase", int.class);
             }
 
             disguiseEntityMethod = disguiseAPIClass.getMethod("disguiseEntity", Entity.class, disguiseClass);
@@ -216,6 +230,62 @@ public class LibsDisguisesHook {
             plugin.getLogger().log(Level.WARNING, "Failed to resolve disguise type for " + entityType.name() + ": " + throwable.getMessage(), throwable);
         }
         return null;
+    }
+
+    private void applyWatcherTweaks(Pet pet, Object watcher) {
+        if (pet == null || watcher == null) {
+            return;
+        }
+
+        PetType type = pet.getType();
+        if (type == null) {
+            return;
+        }
+
+        if (ageableWatcherClass != null
+                && ageableWatcherClass.isInstance(watcher)
+                && BABY_DISGUISES.contains(type)) {
+            invokeOptional(ageableSetBabyMethod, watcher, Boolean.TRUE);
+        }
+
+        if (type == PetType.ZOMBIE
+                && zombieWatcherClass != null
+                && zombieWatcherClass.isInstance(watcher)) {
+            invokeOptional(zombieSetBabyMethod, watcher, Boolean.TRUE);
+        }
+
+        if (slimeWatcherClass != null && slimeWatcherClass.isInstance(watcher)) {
+            invokeOptional(slimeSetSizeMethod, watcher, 1);
+        }
+
+        if (phantomWatcherClass != null && phantomWatcherClass.isInstance(watcher)) {
+            invokeOptional(phantomSetSizeMethod, watcher, 1);
+        }
+
+        if (flagWatcherSetYModifierMethod != null) {
+            switch (type) {
+                case ENDER_DRAGON:
+                    invokeOptional(flagWatcherSetYModifierMethod, watcher, -1.35F);
+                    invokeOptional(flagWatcherSetNameYModifierMethod, watcher, -0.45F);
+                    if (enderDragonWatcherClass != null
+                            && enderDragonWatcherClass.isInstance(watcher)) {
+                        invokeOptional(enderDragonSetPhaseMethod, watcher, 0);
+                    }
+                    break;
+                case WITHER:
+                    invokeOptional(flagWatcherSetYModifierMethod, watcher, -0.3F);
+                    break;
+                case GIANT:
+                    invokeOptional(flagWatcherSetYModifierMethod, watcher, -0.55F);
+                    invokeOptional(flagWatcherSetNameYModifierMethod, watcher, -0.3F);
+                    break;
+                case WARDEN:
+                    invokeOptional(flagWatcherSetYModifierMethod, watcher, -0.2F);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private Class<?> findClass(String name) {

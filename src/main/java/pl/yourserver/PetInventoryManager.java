@@ -57,7 +57,7 @@ public class PetInventoryManager implements Listener {
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
         String command = event.getMessage().toLowerCase();
-        if (command.equals("/donkey") || command.equals("/storage") || command.equals("/backpack")) {
+        if (command.equals("/donkey") || command.equals("/donkey_storage") || command.equals("/backpack")) {
             event.setCancelled(true);
             openDonkeyInventory(event.getPlayer());
         }

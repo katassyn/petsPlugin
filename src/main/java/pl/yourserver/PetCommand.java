@@ -409,6 +409,11 @@ public class PetCommand implements CommandExecutor, TabCompleter {
 
         Player player = (Player) sender;
 
+        if (!player.hasPermission("pet.backpack")) {
+            player.sendMessage(TextUtil.colorize("&cYou don't have permission!"));
+            return;
+        }
+
         // Sprawdź czy gracz ma aktywnego Donkey peta
         boolean hasDonkey = false;
         for (Pet pet : plugin.getPetManager().getActivePets(player)) {
@@ -424,8 +429,7 @@ public class PetCommand implements CommandExecutor, TabCompleter {
         }
 
         // Otwórz dodatkowy ekwipunek
-        // TODO: Implementacja dodatkowego ekwipunku
-        player.sendMessage(TextUtil.colorize("&eOpening donkey backpack..."));
+        plugin.getPetInventoryManager().openDonkeyInventory(player);
     }
 
     private void handleAdminCommand(CommandSender sender, String[] args) {
