@@ -91,6 +91,17 @@ public class PetGUI {
         ItemStack petInfo = createDetailedPetItem(pet);
         gui.setItem(13, petInfo);
 
+        // Donkey backpack shortcut (slot 4 - above pet info)
+        if (pet.getType() == PetType.DONKEY) {
+            ItemStack backpackShortcut = new ItemBuilder(Material.CHEST)
+                    .setName(TextUtil.colorize("&6Open Donkey Backpack"))
+                    .addLore(TextUtil.colorize("&7Access the storage of your Donkey pet."))
+                    .addLore("")
+                    .addLore(TextUtil.colorize("&eClick to open &7(/donkey)"))
+                    .build();
+            gui.setItem(4, backpackShortcut);
+        }
+
         // Przycisk aktywacji/deaktywacji
         Material toggleMaterial = pet.isActive() ? Material.ENDER_PEARL : Material.EMERALD;
         String toggleName = pet.isActive() ? "&5Deactivate Pet" : "&aActivate Pet";
