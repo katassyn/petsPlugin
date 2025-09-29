@@ -244,7 +244,7 @@ public class PetPlaceholderExpansion extends PlaceholderExpansion {
     private int getDonkeyStorage(List<Pet> pets) {
         for (Pet pet : pets) {
             if (pet.getType() == PetType.DONKEY) {
-                return pet.getLevel() >= 25 ? 27 : 9;
+                return DonkeyBackpackUtil.resolveSlots(pet);
             }
         }
         return 0;

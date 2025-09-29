@@ -92,9 +92,10 @@ pets:
     effects:
       extra-inventory:
         base-slots: 9
-        level-25-slots: 27
+        mid-level-slots: 18
+        max-level-slots: 27
         description: "Extra inventory (%value% slots)"
-        # Lvl 1-24: 9 slots, Lvl 25+: 27 slots
+        # Lvl 1-19: 9 slots, Lvl 20-39: 18 slots, Lvl 40: 27 slots
     placeholders:
       - "pet_donkey_extra_storage"
 
