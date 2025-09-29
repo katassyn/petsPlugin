@@ -117,6 +117,13 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
+        // Otwieranie plecaka Donkey (slot 4)
+        if (pet.getType() == PetType.DONKEY && slot == 4 && clicked.getType() == Material.CHEST) {
+            plugin.getPetInventoryManager().openDonkeyInventory(player);
+            player.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, 1.0f, 1.0f);
+            return;
+        }
+
         // Aktywacja/Deaktywacja peta (slot 29)
         if (slot == 29) {
             plugin.getPetManager().togglePet(player, pet);
