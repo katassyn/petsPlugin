@@ -106,9 +106,9 @@ public class PetGUI {
             ItemStack feedItem = new ItemBuilder(Material.SMALL_AMETHYST_BUD)
                     .setName(TextUtil.colorize("&5Feed Pet"))
                     .addLore(TextUtil.colorize("&7Your pet needs feeding to level up!"))
-                    .addLore(TextUtil.colorize("&7Required: &5" + pet.getRequiredFeedAmount() + "x Andermant"))
+                    .addLore(TextUtil.colorize("&7Required: &5" + pet.getRequiredFeedAmount() + "x Anderium"))
                     .addLore("")
-                    .addLore(TextUtil.colorize("&eClick with Andermant in inventory!"))
+                    .addLore(TextUtil.colorize("&eClick with Anderium in inventory!"))
                     .build();
             gui.setItem(31, feedItem);
         }
@@ -260,7 +260,7 @@ public class PetGUI {
         lore.add("");
         if (pet.needsFeeding()) {
             lore.add(TextUtil.colorize("&c⚠ Requires feeding to level up!"));
-            lore.add(TextUtil.colorize("&7Andermant needed: &5" + pet.getRequiredFeedAmount()));
+            lore.add(TextUtil.colorize("&7Anderium needed: &5" + pet.getRequiredFeedAmount()));
         }
 
         ItemStack baseHead = plugin.getHeadManager().getPetHead(pet.getType());

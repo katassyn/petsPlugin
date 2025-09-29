@@ -76,7 +76,7 @@ public class PetPlaceholderExpansion extends PlaceholderExpansion {
         }
 
         // LEGENDARY pets placeholders
-        if (params.equals("fishing_chest_bonus")) {
+        if (params.equals("fishing_chest_bonus") || params.equals("fisherman_chest_chance")) {
             return String.valueOf(getFishingChestBonus(activePets));
         }
         if (params.equals("turtle_damage_reduction")) {
@@ -139,19 +139,28 @@ public class PetPlaceholderExpansion extends PlaceholderExpansion {
         }
 
         // Fishing placeholders
-        if (params.equals("fishing_ocean_treasure_chance")) {
+        if (params.equals("fishing_ocean_treasure_chance") || params.equals("ocean_treasure_chance")) {
             return String.valueOf(getOceanTreasureChance(activePets));
+        }
+        if (params.equals("fishing_rune_chance") || params.equals("rune_chance")) {
+            return String.valueOf(getFishingRuneChance(activePets));
+        }
+        if (params.equals("fishing_map_chance") || params.equals("treasure_map_chance")) {
+            return String.valueOf(getFishingMapChance(activePets));
         }
         if (params.equals("fishing_rune_bonus")) {
             return String.valueOf(getRuneBonus(activePets));
         }
 
         // Mining placeholders
-        if (params.equals("mine_rare_ore_chance")) {
+        if (params.equals("mine_rare_ore_chance") || params.equals("legendary_ore_chance")) {
             return String.valueOf(getRareOreChance(activePets));
         }
-        if (params.equals("mine_ore_duplication")) {
+        if (params.equals("mine_ore_duplication") || params.equals("ore_duplication_chance")) {
             return String.valueOf(getOreDuplication(activePets));
+        }
+        if (params.equals("mine_rare_sphere_chance") || params.equals("sphere_double_chance")) {
+            return String.valueOf(getMineRareSphereChance(activePets));
         }
 
         // MYTHIC pets placeholders
@@ -258,6 +267,14 @@ public class PetPlaceholderExpansion extends PlaceholderExpansion {
             }
         }
         return 0;
+    }
+
+    private double getFishingRuneChance(List<Pet> pets) {
+        return getAllFishingBonuses(pets);
+    }
+
+    private double getFishingMapChance(List<Pet> pets) {
+        return getAllFishingBonuses(pets);
     }
 
     private double getTurtleDamageReduction(List<Pet> pets) {
@@ -474,6 +491,10 @@ public class PetPlaceholderExpansion extends PlaceholderExpansion {
             }
         }
         return 0;
+    }
+
+    private double getMineRareSphereChance(List<Pet> pets) {
+        return getAllMiningBonuses(pets);
     }
 
     private double getOreDuplication(List<Pet> pets) {

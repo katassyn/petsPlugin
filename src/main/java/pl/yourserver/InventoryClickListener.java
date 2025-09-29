@@ -172,7 +172,7 @@ public class InventoryClickListener implements Listener {
 
         if (andermantCount < requiredAmount) {
             player.sendMessage(TextUtil.colorize(
-                    "&cYou need &5" + requiredAmount + "x Andermant &cto feed this pet! " +
+                    "&cYou need &5" + requiredAmount + "x Anderium &cto feed this pet! " +
                             "(You have: " + andermantCount + ")"
             ));
             return;
@@ -197,7 +197,7 @@ public class InventoryClickListener implements Listener {
                 if (item != null && item.getType() == Material.SMALL_AMETHYST_BUD) {
                     if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
                         String name = item.getItemMeta().getDisplayName();
-                        if (name.contains("Andermant")) {
+                        if (name.contains("Anderium")) {
                             int removeFromStack = Math.min(toRemove, item.getAmount());
                             item.setAmount(item.getAmount() - removeFromStack);
                             toRemove -= removeFromStack;
