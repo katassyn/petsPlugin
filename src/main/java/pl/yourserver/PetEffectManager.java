@@ -70,8 +70,8 @@ public class PetEffectManager {
                 break;
 
             case DONKEY:
-                // Dodatkowy schowek: 9 slotÄ‚â€žĂ˘â‚¬ĹˇĂ„Ä…Ă˘â‚¬Ĺˇw Ă„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬Ă‚Â Ä‚ËĂ˘â€šÂ¬Ă˘â€žË 27 na 25lvl
-                int extraSlots = pet.getLevel() >= 25 ? 27 : 9;
+                // Dodatkowy schowek: 9 slotów, 18 na średnich poziomach, 27 na maksymalnym poziomie
+                int extraSlots = DonkeyBackpackUtil.resolveSlots(pet);
                 integrations.setPlaceholder("donkey_extra_storage", extraSlots);
                 break;
 

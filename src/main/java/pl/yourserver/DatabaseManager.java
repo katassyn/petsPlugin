@@ -313,10 +313,11 @@ public class DatabaseManager {
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
 
             int size = dataInput.readInt();
-            Inventory inventory = Bukkit.createInventory(null, slots, TextUtil.colorize("&5Donkey Storage"));
+            int normalizedSize = Math.max(slots, size);
+            Inventory inventory = Bukkit.createInventory(null, normalizedSize, TextUtil.colorize("&5Donkey Storage"));
 
             // Wczytaj wszystkie itemy
-            for (int i = 0; i < size && i < slots; i++) {
+            for (int i = 0; i < size && i < inventory.getSize(); i++) {
                 ItemStack item = (ItemStack) dataInput.readObject();
                 if (item != null) {
                     inventory.setItem(i, item);
@@ -339,10 +340,10 @@ public class DatabaseManager {
     }
 
     // Wczytaj backpack z bazy danych
-    public Inventory loadBackpackInventory(UUID playerUUID) {
+    public Inventory loadBackpackInventory(UUID playerUUID, int preferredSlots) {
         String data = loadBackpack(playerUUID);
         if (data != null && !data.isEmpty()) {
-            return deserializeInventory(data, 27); // Domyślnie 27 slotów
+            return deserializeInventory(data, preferredSlots);
         }
         return null;
     }
