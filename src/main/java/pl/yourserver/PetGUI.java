@@ -65,6 +65,19 @@ public class PetGUI {
                 .build();
         gui.setItem(45, infoItem);
 
+        // Teleport Cage button (slot 49)
+        ItemStack teleportCageItem = new ItemBuilder(Material.SOUL_CAMPFIRE)
+                .setName(TextUtil.colorize("&c&lTeleport Cage"))
+                .addLore("")
+                .addLore(TextUtil.colorize("&7Burn a pet to transfer its"))
+                .addLore(TextUtil.colorize("&7experience to another pet."))
+                .addLore("")
+                .addLore(TextUtil.colorize("&c&lWARNING: &7This is permanent!"))
+                .addLore("")
+                .addLore(TextUtil.colorize("&eClick to open"))
+                .build();
+        gui.setItem(49, teleportCageItem);
+
         // Przycisk zamknięcia (nowa pozycja)
         ItemStack closeItem = new ItemBuilder(Material.BARRIER)
                 .setName(TextUtil.colorize("&cClose"))
@@ -180,8 +193,9 @@ public class PetGUI {
                 ? new ItemBuilder(baseHead)
                 : new ItemBuilder(Material.PLAYER_HEAD);
 
+        String hungerIndicator = pet.needsFeeding() ? " &c&lHUNGRY!" : "";
         return builder
-                .setName(TextUtil.colorize(pet.getRarity().getColor() + pet.getType().getDisplayName()))
+                .setName(TextUtil.colorize(pet.getRarity().getColor() + pet.getType().getDisplayName() + hungerIndicator))
                 .setLore(lore)
                 .build();
     }
@@ -240,9 +254,12 @@ public class PetGUI {
 
         // Efekty
         String baseEffect = plugin.getPetEffectManager().getPetEffectDescription(pet);
+        String baseEffectValue = plugin.getPetEffectManager().getBaseEffectDescription(pet);
+        String totalEffect = plugin.getPetEffectManager().getTotalEffectDescription(pet);
         double multiplier = pet.getEffectMultiplier();
-        lore.add(TextUtil.colorize("&7Base Effect: " + baseEffect));
-        lore.add(TextUtil.colorize("&7Effect Power: &a+" + df.format((multiplier - 1) * 100) + "%"));
+        lore.add(TextUtil.colorize("&7Base Effect: " + baseEffectValue));
+        lore.add(TextUtil.colorize("&7Effect Multiplier: &a+" + df.format((multiplier - 1) * 100) + "%"));
+        lore.add(TextUtil.colorize("&7&l➤ Total Pet Bonus: " + totalEffect));
 
         // Progi poziomów
         lore.add("");
@@ -279,8 +296,9 @@ public class PetGUI {
                 ? new ItemBuilder(baseHead)
                 : new ItemBuilder(Material.PLAYER_HEAD);
 
+        String hungerIndicator = pet.needsFeeding() ? " &c&lHUNGRY!" : "";
         return builder
-                .setName(TextUtil.colorize(pet.getRarity().getColor() + "&l" + pet.getType().getDisplayName()))
+                .setName(TextUtil.colorize(pet.getRarity().getColor() + "&l" + pet.getType().getDisplayName() + hungerIndicator))
                 .setLore(lore)
                 .build();
     }

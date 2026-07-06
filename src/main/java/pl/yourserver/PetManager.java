@@ -128,8 +128,9 @@ public class PetManager {
         entity.setMetadata("petOwner", new FixedMetadataValue(plugin, owner.getUniqueId().toString()));
         entity.setMetadata("petUUID", new FixedMetadataValue(plugin, pet.getUuid().toString()));
 
+        String hungerIndicator = pet.needsFeeding() ? " &c&lHUNGRY!" : "";
         String petName = TextUtil.colorize(
-                pet.getRarity().getColor() + pet.getType().getDisplayName() + " &7[Lv." + pet.getLevel() + "]"
+                pet.getRarity().getColor() + pet.getType().getDisplayName() + " &7[Lv." + pet.getLevel() + "]" + hungerIndicator
         );
         entity.setCustomName(petName);
         entity.setCustomNameVisible(true);

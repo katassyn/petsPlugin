@@ -639,6 +639,118 @@ public class PetEffectManager {
         return false;
     }
 
+    // Get base effect description (without multipliers)
+    public String getBaseEffectDescription(Pet pet) {
+        switch (pet.getType()) {
+            case COW:
+                double cowBaseHp = 12.0 + ((pet.getLevel() - 1) * 2.0);
+                return TextUtil.colorize("&c+" + df.format(cowBaseHp) + " Maximum Health");
+            case PIG:
+                double pigBaseChance = 5.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&6" + df.format(pigBaseChance) + "% mob money drop");
+            case SHEEP:
+                double sheepBaseHeal = 12.0 + ((pet.getLevel() - 1) * 2.0);
+                return TextUtil.colorize("&d+" + df.format(sheepBaseHeal) + " HP/20s");
+            case CHICKEN:
+                double chickenBaseLuck = pet.getLevel() * 0.25;
+                return TextUtil.colorize("&a+" + df.format(chickenBaseLuck) + " Luck");
+            case DONKEY:
+                double donkeySlots = pet.getLevel() >= 25 ? 27 : 9;
+                return TextUtil.colorize("&e" + formatNumber(donkeySlots) + " extra slots");
+            case SNOW_GOLEM:
+                double snowBaseRadius = 5.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&b" + df.format(snowBaseRadius) + " block slow radius");
+            case IRON_GOLEM:
+                double ironBaseDamage = 2.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&7" + df.format(ironBaseDamage) + "x damage/30s");
+            case SQUID:
+                double squidBaseChest = 15.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&3+" + df.format(squidBaseChest) + "% fishing chest");
+            case TURTLE:
+                double turtleBaseReduction = 1.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&2-" + df.format(turtleBaseReduction) + "% mob damage taken");
+            case LLAMA:
+                double llamaBaseDamage = 2.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&c+" + df.format(llamaBaseDamage) + "% mob damage dealt");
+            case ENDERMAN:
+                double endermanBaseTp = 7.5 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&5" + df.format(endermanBaseTp) + "% free dungeon TP");
+            case WITCH:
+                double witchBaseDuration = 15.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&d+" + df.format(witchBaseDuration) + "% potion duration");
+            case HUSK:
+                double huskBaseChance = 12.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&6+" + df.format(huskBaseChance) + "% mob sphere");
+            case MOOSHROOM:
+                double mooshroomBaseSpeed = 20.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&a+" + df.format(mooshroomBaseSpeed) + "% farm growth");
+            case FROG:
+                double frogBaseHoney = 15.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&e+" + df.format(frogBaseHoney) + "% honey production");
+            case WOLF:
+                double wolfBasePvp = 5.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&c+" + df.format(wolfBasePvp) + "% PvP dmg & reduction");
+            case BEE:
+                double beeBaseQuality = 25.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&6+" + df.format(beeBaseQuality) + "% honey quality");
+            case WANDERING_TRADER:
+                double traderBaseCost = 1.43 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&a-" + df.format(traderBaseCost) + "% crafting cost");
+            case PANDA:
+                double pandaBaseStorage = 30.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&2+" + df.format(pandaBaseStorage) + "% farm storage");
+            case ZOMBIE:
+                double zombieBaseDamage = 3.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&4+" + df.format(zombieBaseDamage) + "% Q1/Q3 damage");
+            case SKELETON:
+                double skeletonBaseDamage = 3.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&7+" + df.format(skeletonBaseDamage) + "% Q6/Q7 damage");
+            case SPIDER:
+                double spiderBaseDamage = 3.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&8+" + df.format(spiderBaseDamage) + "% Q2/Q4 damage");
+            case CREEPER:
+                double creeperBaseDamage = 3.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&a+" + df.format(creeperBaseDamage) + "% Q5/Q8 damage");
+            case SLIME:
+                double slimeBaseDamage = 3.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&2+" + df.format(slimeBaseDamage) + "% Q9/Q10 damage");
+            case PHANTOM:
+                double phantomBaseTreasure = 10.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&b+" + df.format(phantomBaseTreasure) + "% ocean treasure");
+            case GLOW_SQUID:
+                double glowBaseChance = 18.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&e+" + df.format(glowBaseChance) + "% rare ore");
+            case GUARDIAN:
+                double guardianBaseBonus = 10.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&b+" + df.format(guardianBaseBonus) + "% fishing bonuses");
+            case SNIFFER:
+                double snifferBaseBonus = 18.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&6+" + df.format(snifferBaseBonus) + "% mining bonuses");
+            case WITHER_SKELETON:
+                double witherBaseMaterials = 6.25 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&5+" + df.format(witherBaseMaterials) + "% special materials");
+            case ENDER_DRAGON:
+                return TextUtil.colorize("&d+1 slot & duplicates effects");
+            case WARDEN:
+                double wardenSlots = pet.hasSpecialEffect() ? 3 : 2;
+                return TextUtil.colorize("&8+" + df.format(wardenSlots) + " pet slots");
+            case WITHER:
+                double witherBaseDamage = 5.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&4+" + df.format(witherBaseDamage) + "% boss damage");
+            case GIANT:
+                double giantBaseChance = 5.0 * (1.0 + ((pet.getLevel() - 1) * 0.01));
+                return TextUtil.colorize("&c+" + df.format(giantBaseChance) + "% mythic drops");
+            default:
+                return TextUtil.colorize("&7Unknown");
+        }
+    }
+
+    // Get total effect description (with all multipliers applied)
+    public String getTotalEffectDescription(Pet pet) {
+        // This is the same as the current getPetEffectDescription
+        return getPetEffectDescription(pet);
+    }
+
     // Pobierz opis efektu peta
     public String getPetEffectDescription(Pet pet) {
         String description;

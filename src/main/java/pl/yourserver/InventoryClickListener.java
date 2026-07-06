@@ -42,7 +42,7 @@ public class InventoryClickListener implements Listener {
         String title = event.getView().getTitle();
 
         // Sprawdź czy to nasze GUI
-        if (!title.contains("Pet")) return;
+        if (!title.contains("Pet") && !title.contains("Teleport Cage")) return;
 
         event.setCancelled(true);
 
@@ -61,12 +61,31 @@ public class InventoryClickListener implements Listener {
         else if (title.startsWith(TextUtil.colorize("&8Pet:"))) {
             handlePetMenuClick(player, clicked, slot, event.getClick());
         }
+        // Teleport Cage - Sacrifice Selection
+        else if (title.equals(TextUtil.colorize("&8" + TeleportCageManager.SACRIFICE_GUI_TITLE))) {
+            plugin.getTeleportCageManager().handleSacrificeSelectionClick(player, slot, clicked);
+        }
+        // Teleport Cage - Target Selection
+        else if (title.equals(TextUtil.colorize("&8" + TeleportCageManager.TARGET_GUI_TITLE))) {
+            plugin.getTeleportCageManager().handleTargetSelectionClick(player, slot, clicked);
+        }
+        // Teleport Cage - Confirmation
+        else if (title.equals(TextUtil.colorize("&8" + TeleportCageManager.CONFIRM_GUI_TITLE))) {
+            plugin.getTeleportCageManager().handleConfirmationClick(player, slot, clicked);
+        }
     }
 
     private void handleMainMenuClick(Player player, ItemStack clicked, int slot) {
         // Przycisk zamknięcia (nowa pozycja)
         if (slot == 53 && clicked.getType() == Material.BARRIER) {
             player.closeInventory();
+            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
+            return;
+        }
+
+        // Teleport Cage button (slot 49)
+        if (slot == 49 && clicked.getType() == Material.SOUL_CAMPFIRE) {
+            plugin.getTeleportCageManager().openSacrificePetSelection(player);
             player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
             return;
         }

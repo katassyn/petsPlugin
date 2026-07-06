@@ -21,6 +21,11 @@ public class PlayerQuitListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
+        // Clear Teleport Cage session (DC protection)
+        if (plugin.getTeleportCageManager() != null) {
+            plugin.getTeleportCageManager().handlePlayerQuit(player);
+        }
+
         // Zapisz pety gracza asynchronicznie
         plugin.getPetDataManager().savePlayerPetsAsync(player).thenRun(() -> {
             if (plugin.getConfigManager().isDebug()) {

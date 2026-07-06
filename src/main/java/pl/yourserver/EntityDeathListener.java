@@ -118,9 +118,10 @@ public class EntityDeathListener implements Listener {
 
         // Update entity name
         if (pet.getEntity() != null && !pet.getEntity().isDead()) {
+            String hungerIndicator = pet.needsFeeding() ? " &c&lHUNGRY!" : "";
             String petName = TextUtil.colorize(
                     pet.getRarity().getColor() + pet.getType().getDisplayName() +
-                            " &7[Lv." + newLevel + "]"
+                            " &7[Lv." + newLevel + "]" + hungerIndicator
             );
             pet.getEntity().setCustomName(petName);
         }

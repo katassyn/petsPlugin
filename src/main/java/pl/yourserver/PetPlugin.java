@@ -39,6 +39,7 @@ public class PetPlugin extends JavaPlugin {
     private PetFollowTask petFollowTask;
     private HeadManager headManager;
     private PetDungeonApi dungeonApi;
+    private TeleportCageManager teleportCageManager;
 
     @Override
     public void onEnable() {
@@ -69,6 +70,7 @@ public class PetPlugin extends JavaPlugin {
         petCombatManager = new PetCombatManager(this);
         petDropManager = new PetDropManager(this, configManager);
         petManager = new PetManager(this);
+        teleportCageManager = new TeleportCageManager(this);
 
         // Integracje z innymi pluginami
         integrationManager = new IntegrationManager(this);
@@ -223,6 +225,10 @@ public class PetPlugin extends JavaPlugin {
 
     public HeadManager getHeadManager() {
         return headManager;
+    }
+
+    public TeleportCageManager getTeleportCageManager() {
+        return teleportCageManager;
     }
 
     public org.bukkit.NamespacedKey getNamespacedKey(String key) {
